@@ -11,13 +11,13 @@
 	<?php
 	$errRetiro = "";
 	$cantidad = $_POST["cantidad"];
-
+    $cuenta =  $_POST["IDCuenta"];
 	include_once dirname(__FILE__) . '/config.php';
 	$con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
 
 	if ($_SERVER["REQUEST_METHOD"] == "POST")
 	{
-		if (empty($_POST["cantidad"])){
+		if (empty($_POST["cantidad"]) ){
 			$errRetiro = "Transaccion declinada: Ingrese una cantidad valida";
 		}
 
@@ -34,7 +34,7 @@
 	  			 WHEN (Saldo-$cantidad)>0 THEN Saldo-$cantidad
 	  			 ELSE Saldo
 	  			 END
-		    WHERE `ID_USUARIO` = 1";
+		    WHERE `PID` = $cuenta";
 
 			$resultado = mysqli_query($con,$sql );
 		   	if(mysqli_affected_rows($con) !== 0){
