@@ -87,7 +87,7 @@ function read_tarjetas(){
         $str_datos .= '<th>Estado</th>';
         $str_datos .= '</tr>';
 
-        $sql = "SELECT * FROM `tarjeta_credito` WHERE `ID_CUENTA` = 1"; //WHERE `ID_CUENTA` = $_SESSION['numero de las cuentas jaja']";
+        $sql = "SELECT * FROM `tarjeta_credito` WHERE `ID_CUENTA` = 1"; //WHERE `ID_CUENTA` = $_SESSION['numero de la cuenta jaja']";
     }
 
     $resultado = mysqli_query($con, $sql);
