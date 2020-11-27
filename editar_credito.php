@@ -6,7 +6,7 @@
 <body>
     <h1>Editar Credito</h1>
     <input type='button' value='Regresar al index' onclick="document.location.href='index.php';" />
-    <form action="<?= $_SERVER["PHP_SELF"]; ?>" method="post">
+    <form action='<?= $_SERVER["PHP_SELF"]; ?>' method='post'>
         <label for="ID">ID(Numero del Credito)</label><br>
         <input type="text" name="ID"><br>
 
@@ -54,7 +54,7 @@ if (isset($_SESSION['logeado'])) {
             if ($aux == 1) {
                 echo "Se ha encontrado el Credito de numero {$_POST["ID"]}";
                 echo "<br>";
-                update_cuenta();
+                update_credito();
             } else {
                 echo "NO se ha encontrado un Credito de numero {$_POST["ID"]}";
                 echo "<br>";
@@ -67,7 +67,7 @@ if (isset($_SESSION['logeado'])) {
     echo "Este funcion es exclusiva para Administradores.";
 }
 
-function update_cuenta()
+function update_credito()
 {
     include_once dirname(__FILE__) . '/config.php';
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
