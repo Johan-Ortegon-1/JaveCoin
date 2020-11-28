@@ -50,6 +50,10 @@
             </div>
             <div>
                 <?php
+                    if($loginFlag and isset($_SESSION['currentUserNombre']))
+                    {
+                        echo "<h3>Bienvenido: ".$_SESSION['currentUserNombre']."</h3>";
+                    }
                     echo "<h3>Rol del usuario actual: ".$vistaHTMLCurrentUserRol."</h3>";
                 ?>
             </div>
