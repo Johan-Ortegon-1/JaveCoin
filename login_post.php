@@ -61,6 +61,8 @@
                 $currentUserRol = mysqli_query($con, "SELECT Rol as rol from usuario WHERE Nombre = \"{$nombreUsuario}\" AND Contrasena = \"{$password}\"");
                 $dataCurrentUser = mysqli_fetch_assoc($currentUserRol);
                 $_SESSION['currentUserRol'] = $dataCurrentUser['rol'];
+
+                $_SESSION['currentUserNombre'] = $nombreUsuario;
             }
             echo "Usuario con ID: ".$_SESSION['currentUserID']." y Rol: ".$_SESSION['currentUserRol'];
             echo "<script> window.location.href = \"index.php\"; </script>";
