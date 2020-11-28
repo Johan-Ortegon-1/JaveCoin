@@ -4,8 +4,10 @@
 <?php
     $vistaHTMLGeneral = "";
     $vistaHTMLCurrentUserRol = "";
+    $loginFlag = true;
     if(!isset($_SESSION['currentUserID']) or !isset($_SESSION['currentUserRol']))
     {
+        $loginFlag = false;
         $vistaHTMLCurrentUserRol.="Visitante";
         $vistaHTMLGeneral .= "<h3>Funciones del Visitante</h3>
         <input type='button'value='Consignar' onclick=\"document.location.href='consignar.php';\"/>
@@ -33,13 +35,21 @@
     <title>BANCO XXX</title>
         <body>
             <div>
-                <a href="login.php">Login</a>
-                <a href="register.php">Resgistrarse</a>
+                <?php
+                    if(!$loginFlag)
+                    {
+                        echo "<a href=\"login.php\">Login</a>
+                        <a href=\"register.php\">Resgistrarse</a>";
+                    }
+                    else
+                    {
+                        echo "<a href=\"logout.php\">Logout</a>";
+                    }
+                ?>
             </div>
             <div>
-                <h3>Rol del usuario actual:</h3>
                 <?php
-                    echo $vistaHTMLCurrentUserRol;
+                    echo "<h3>Rol del usuario actual: ".$vistaHTMLCurrentUserRol."</h3>";
                 ?>
             </div>
             <h3>Configuracion inicial del sistema</h3>

@@ -1,3 +1,6 @@
+<?php
+    session_start();
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,7 +8,8 @@
 </head>
 <body>
     <?php
-    $errCreacion = "";
+    $mssCreacion = "";
+    $flagError = false;
     $nombreUsuario = $_POST["nombre_u"];
     $password = $_POST["password"];
     $rol = $_POST["rol"];
@@ -18,33 +22,50 @@
     if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
         if (empty($_POST["nombre_u"]) ){
-            $errCreacion = "Error de Registro: El nombre es necesario para el registro";
+            $mssCreacion = "Error de Registro: El nombre es necesario para el registro";
+            $flagError = true;
         }
         else if (empty($_POST["password"]) ){
-            $errCreacion = "Error de Registro: La contraseña es necesaria para el registro";
+            $mssCreacion = "Error de Registro: La contraseña es necesaria para el registro";
+            $flagError = true;
         }
         else if (mysqli_connect_errno()) {
-            $errCreacion = "Error en la conexión: ";
+            $mssCreacion = "Error en la conexión: ".mysqli_error($con);
+            $flagError = true;
         }
         else 
         {
             if(mysqli_query($con,$sql)){
-                $errCreacion = "Se ha registrado al: $rol con nombre de usuario: $nombreUsuario";
-                echo "Se ha registrado al: $rol con nombre de usuario: $nombreUsuario";
+                $mssCreacion = "Se ha registrado al: $rol con nombre de usuario: $nombreUsuario";
             }
             else{
-                echo "<br>"."Error en la insercion";
-                $errCreacion = "Probleas en la conexión".mysqli_error($con);
+                $mssCreacion = "Problemas en la conexión ".mysqli_error($con);
             }
         }
     }
     ?>
     <!-- Alerta con el resultado de la transaccion -->
-    <?php echo $errCreacion;
-    echo "<script>
-                alert(\"$errCreacion\");
-                window.location.href = \"index.php\";
-            </script>"
+    <?php 
+        echo "<script>
+                    alert(\"$mssCreacion\");
+                    window.location.href = \"index.php\";
+            </script>";
+        if($flagError) {echo "<script> window.location.href = \"register.php\"; </script>";}
+        else
+        {
+            if(!isset($_SESSION['currentUserID']))
+            {
+                $currentUserID = mysqli_query($con, "SELECT PID as id from usuario WHERE Nombre = \"{$nombreUsuario}\" AND Contrasena = \"{$password}\"");
+                $dataCurrentUser = mysqli_fetch_assoc($currentUserID);
+                $_SESSION['currentUserID'] = $dataCurrentUser['id'];
+
+                $currentUserRol = mysqli_query($con, "SELECT Rol as rol from usuario WHERE Nombre = \"{$nombreUsuario}\" AND Contrasena = \"{$password}\"");
+                $dataCurrentUser = mysqli_fetch_assoc($currentUserRol);
+                $_SESSION['currentUserRol'] = $dataCurrentUser['rol'];
+            }
+            echo "Usuario con ID: ".$_SESSION['currentUserID']." y Rol: ".$_SESSION['currentUserRol'];
+            echo "<script> window.location.href = \"index.php\"; </script>";
+        }
     ?>
 </body>
 </html>

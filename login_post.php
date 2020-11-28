@@ -45,14 +45,13 @@
     }
     ?>
     <!-- Alerta con el resultado de la transaccion -->
-    <?php echo $mssLogin;
+    <?php
         echo "<script>
                     alert(\"$mssLogin\");
             </script>";
         if($flagError) {echo "<script> window.location.href = \"login.php\"; </script>";}
         else
         {
-            $userAux = 'Aun no funciona! ';
             if(!isset($_SESSION['currentUserID']))
             {
                 $currentUserID = mysqli_query($con, "SELECT PID as id from usuario WHERE Nombre = \"{$nombreUsuario}\" AND Contrasena = \"{$password}\"");
