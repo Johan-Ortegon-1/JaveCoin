@@ -14,7 +14,7 @@
 
     $transferir = "UPDATE `cuenta` 
                 SET Saldo = CASE
-                     WHEN (Saldo-$cantidad)>0 THEN Saldo-$cantidad
+                     WHEN (Saldo-$cantidad)>=0 THEN Saldo-$cantidad
                      ELSE Saldo
                      END
                 WHERE `PID` = $cuenta";
