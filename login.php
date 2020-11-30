@@ -13,6 +13,6 @@
             <br>
             <input type="submit" value="login" name="login">
         </form>
-        <input type='button'value='Regresar al index' onclick="document.location.href='index.php';"/>
+        <input type='button'value='Cancelar' onclick="document.location.href='index.php';"/>
     </body>
 </html>

@@ -14,6 +14,7 @@
             $rol = "";
             include_once dirname(__FILE__) . '/config.php';
             $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
+            $cuata_general = CUOTA_GENERAL;
             if(!isset($_SESSION['currentUserID']) or !isset($_SESSION['currentUserRol']))
             {
                 $mssCrearCuenta = "No se encuentra logeado, por favor inicie sesión para esta acción.";
@@ -21,9 +22,9 @@
             else
             {
                 $IDUsuario = $_SESSION['currentUserID'];
-                $sql = "INSERT INTO Cuenta (Saldo, Cuota_manejo, ID_USUARIO) VALUES (0.0, -10.0, $IDUsuario)";
+                $sql = "INSERT INTO Cuenta (Saldo, Cuota_manejo, ID_USUARIO) VALUES (0.0, $cuata_general, $IDUsuario)";
                 if(mysqli_query($con,$sql)){
-                    $mssCrearCuenta = "Se ha creado la Cuenta de ahorros a nombre de: ".$_SESSION['currentUserNombre']." El admin determinará su cuota de manejo pronto";
+                    $mssCrearCuenta = "Se ha creado la Cuenta de ahorros a nombre de: ".$_SESSION['currentUserNombre'];
                 }
                 else{
                     $mssCrearCuenta = "Problemas en la conexión ".mysqli_error($con);

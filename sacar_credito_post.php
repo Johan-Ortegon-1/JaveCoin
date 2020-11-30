@@ -13,7 +13,6 @@ session_start();
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
     $estado_inicial = ESTADO_INICIAL;
     $tasa_inicial = TASA_INTERES_GENERAL;
-    echo $tasa_inicial;
 
     if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
@@ -52,7 +51,7 @@ session_start();
             else{
                 $saldo = $_POST['saldo'];
                 $tasa = $_POST['tasa'];
-                $sql = "INSERT INTO Credito (Tasa_interes, Saldo, Estado, Fecha_pago, Correo_notificaciones, ID_USUARIO) VALUES ($tasa, $saldo, \"ESTADO_INICIAL\", \"2008-11-11\", \"NULL\", $IDUsuario)";
+                $sql = "INSERT INTO Credito (Tasa_interes, Saldo, Estado, Fecha_pago, ID_USUARIO) VALUES ($tasa, $saldo, \"$estado_inicial\", \"2008-11-11\", $IDUsuario)";
                 if(mysqli_query($con,$sql)){
                     $mssSacarCredito = "Se ha creado el crediro, esperando respuesta del Administrador ";
                 }
