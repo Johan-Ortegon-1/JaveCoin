@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1>Editar Usuario</h1>
-    <input type='button' value='Regresar al index' onclick="document.location.href='index.php';" />
+    <input type='button' value='Regresar a Administrar' onclick="document.location.href='administrar.php';" />
     <form action="<?= $_SERVER["PHP_SELF"]; ?>" method="post">
         <label for="ID">ID del usuario</label><br>
         <input type="text" name="ID"><br>
@@ -57,9 +57,47 @@ if (isset($_SESSION['logeado'])) {
 } else {
     echo "Este funcion es exclusiva para Administradores.";
 }
+read_usuarios();
+function read_usuarios(){
+    include_once dirname(__FILE__) . '/config.php';
+    $str_datos = "";
+    $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
+    if (mysqli_connect_errno()) {
+        $str_datos .= "Error en la conexión: " . mysqli_connect_error();
+    } else {
+        $str_datos .= '<table border="1" style="width:100%">';
+        $str_datos .= '<tr>';
+        $str_datos .= '<th>PID</th>';
+        $str_datos .= '<th>Nombre</th>';
+        $str_datos .= '<th>Contraseña</th>';
+        $str_datos .= '<th>Rol</th>';
+        $str_datos .= '</tr>';
+
+        $sql = "SELECT * FROM `usuario`";
+    }
+
+    $resultado = mysqli_query($con, $sql);
+    if (mysqli_query($con, $sql)) {
+        while ($fila = mysqli_fetch_array($resultado)) {
+            $str_datos .= '<tr>';
+            $str_datos .=
+                "<td>{$fila['PID']}</td>
+                      <td>{$fila['Nombre']}</td> 
+                      <td>{$fila['Contrasena']}</td>
+                      <td>{$fila['Rol']}</td>";
+            $str_datos .= "</tr>";
+        }
+        $str_datos .= "</table>";
+        echo "<h3>Estos son todos los usuario existentes en nuestro banco. Recuerda que puedes editar uno o varios campos </h3>";
+        echo $str_datos;
+        mysqli_close($con);
+    } else {
+        echo "Error en la seleccion " . mysqli_error($con);
+    }
+}
 
 function update_usuario()
-{
+{ 
     include_once dirname(__FILE__) . '/config.php';
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
     if (mysqli_connect_errno()) {
@@ -87,8 +125,8 @@ function update_usuario()
         $contador++;
     }
     if ($contador > 0) { //Asegurarse de que modifique al menos un campo
-        $str_datos .= " WHERE `usuario`.`PID` = 1;"; //CAMBIAR AQUI A ID DEL USUARIO.
-        echo $str_datos; //UPDATE `usuario` SET `Nombre` = 'Danielaa', `Contrasena` = '12345', `Rol` = 'u' WHERE `usuario`.`PID` = 2;
+        $str_datos .= " WHERE `usuario`.`PID` = {$_POST["ID"]};"; //CAMBIAR AQUI A ID DEL USUARIO.
+      //  echo $str_datos; //UPDATE `usuario` SET `Nombre` = 'Danielaa', `Contrasena` = '12345', `Rol` = 'u' WHERE `usuario`.`PID` = 2;
         echo "<br>";
         $sql = $str_datos; 
         if (mysqli_query($con, $sql)) {
