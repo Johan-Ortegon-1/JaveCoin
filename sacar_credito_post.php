@@ -13,11 +13,15 @@ session_start();
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
     $estado_inicial = ESTADO_INICIAL;
     $tasa_inicial = TASA_INTERES_GENERAL;
+    $meses_general = MESES_GENERAL;
+    echo "inicio"; 
 
     if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
+        echo "If"; 
         if(!isset($_POST['saldo']))
         {
+            echo "<br> Error 1 if";
             $mssSacarCredito = "El monto es requerido, positivo y mayor a 1";
             $flagError = true;
         }
@@ -31,7 +35,7 @@ session_start();
             {
                 $saldo = $_POST['saldo'];
                 $email = $_POST['email'];
-                $sql = "INSERT INTO Credito (Tasa_interes, Saldo, Estado, Fecha_pago, Correo_notificaciones) VALUES ($tasa_inicial, $saldo, \"$estado_inicial\", \"2008-11-11\", \"$email\")";
+                $sql = "INSERT INTO Credito (Tasa_interes, Saldo, Estado, Fecha_pago, Meses, Correo_notificaciones) VALUES ($tasa_inicial, $saldo, \"$estado_inicial\", \"2008-11-11\", $meses_general, \"$email\")";
                 if(mysqli_query($con,$sql)){
                     $mssSacarCredito = "Se ha creado el crediro para el visitante ";
                 }
@@ -51,7 +55,7 @@ session_start();
             else{
                 $saldo = $_POST['saldo'];
                 $tasa = $_POST['tasa'];
-                $sql = "INSERT INTO Credito (Tasa_interes, Saldo, Estado, Fecha_pago, ID_USUARIO) VALUES ($tasa, $saldo, \"$estado_inicial\", \"2008-11-11\", $IDUsuario)";
+                $sql = "INSERT INTO Credito (Tasa_interes, Saldo, Estado, Fecha_pago, Meses, ID_USUARIO) VALUES ($tasa, $saldo, \"$estado_inicial\", \"2008-11-11\", $meses_general, $IDUsuario)";
                 if(mysqli_query($con,$sql)){
                     $mssSacarCredito = "Se ha creado el crediro, esperando respuesta del Administrador ";
                 }
@@ -63,17 +67,26 @@ session_start();
         }
     }
     else{
-        echo "ERROR6";
+        echo "no IF"; 
+        $flagError = true;
     }
 ?>
 <?php 
-    echo "<script>
+    /*echo "<script>
         alert(\"$mssSacarCredito\");
-    </script>";
+    </script>";*/
     if(!$flagError){
-        echo "<script> window.location.href = \"index.php\"; </script>";
+        echo "<script>
+            alert(\"$mssSacarCredito\");
+            window.location.href = \"index.php\";
+        </script>";
+        //echo "<script> window.location.href = \"index.php\"; </script>";
     }
     else{
-        echo "<script> window.location.href = \"sacar_credito.php\"; </script>";
+        echo "<script>
+            alert(\"$mssSacarCredito\");
+            window.location.href = \"sacar_credito.php\";
+        </script>";
+        //echo "<script> window.location.href = \"sacar_credito.php\"; </script>";
     }
 ?>

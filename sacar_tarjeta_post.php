@@ -10,6 +10,9 @@ session_start();
     $estado_inicial = ESTADO_INICIAL;
     $tasa_inicial = TASA_INTERES_GENERAL;
     $cuata_general = CUOTA_GENERAL;
+    $cupo_inicial = CUPO_INICIAL;
+    $sobre_cupo_inicial = SOBRE_CUPO_INICIAL;
+
     if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
         if(!isset($_POST['cuenta']))
@@ -25,7 +28,7 @@ session_start();
         else
         {
             $IDCuenta = $_POST['cuenta'];
-            $sql = "INSERT INTO Tarjeta_Credito (Cupo, Sobre_cupo, Cuota_manejo, Tasa_interes, Estado, ID_CUENTA) VALUES (0.0, 0.0, $cuata_general, $tasa_inicial, \"$estado_inicial\", $IDCuenta)";
+            $sql = "INSERT INTO Tarjeta_Credito (Cupo, Sobre_cupo, Cuota_manejo, Tasa_interes, Estado, ID_CUENTA) VALUES ($cupo_inicial, $sobre_cupo_inicial, $cuata_general, $tasa_inicial, \"$estado_inicial\", $IDCuenta)";
             if(mysqli_query($con,$sql)){
                 $mssSacarTarjeta = "Se ha creado la tarjeta de credito :) a nombre de: ".$_SESSION['currentUserNombre'];
             }
