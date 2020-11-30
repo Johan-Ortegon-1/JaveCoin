@@ -1,3 +1,7 @@
+<?php
+    session_start();
+    $idUsuario = $_SESSION['currentUserID']
+?>
 <html>
     <head>
         <meta charset="UTF-8">
@@ -20,8 +24,10 @@
             <br>
             <label for="IDP">ID</label><br>
             <input type="text" name="IDP"><br>
+
             <label for="cantidad">Cantidad</label><br>
-            <input type="text" name="cantidad">
+            <input type="number" min="10" step=1 name="cantidad" id="cantidad">
+
             <select name ="tipoMoneda" id="tipoMoneda">
                 <option
                         value="JaveCoin"
@@ -34,8 +40,7 @@
             </select><br>
 
             <?php
-                session_start();
-                if(isset($_SESSION['IDUsuario'])){
+                if(isset($_SESSION['currentUserID'])){
                 }
                 else{
                     echo "<label for=\"cedula\">Cedula</label><br>";

@@ -1,3 +1,7 @@
+<?php
+    session_start();
+    $idUsuario = $_SESSION['currentUserID']
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,8 +22,6 @@
         $cantidad = $cantidad/1000;
     }
 
-    session_start();
-
     include_once dirname(__FILE__) . '/config.php';
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
 
@@ -28,7 +30,7 @@
         if (empty($_POST["cantidad"]) or empty($_POST["IDP"]) or empty($_POST["cantidad"])){
             $errRetiro = "Transaccion declinada: Llene todos los campos";
         }
-        else if(empty($_POST["cedula"]) and !isset($_SESSION['IDUsuario'])){
+        else if(empty($_POST["cedula"]) and !isset($_SESSION['currentUserID'])){
             $errRetiro = "Transaccion declinada: Es necesario la cedula";
         }
 

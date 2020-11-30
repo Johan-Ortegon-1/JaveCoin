@@ -18,7 +18,6 @@
         $precio = $precio/1000;
     }
 
-    session_start();
 
     include_once dirname(__FILE__) . '/config.php';
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
@@ -31,13 +30,15 @@
         else if (mysqli_connect_errno()) {
             $errRetiro = "Error en la conexión: ";
         }else {
-                $sql = "INSERT INTO `compras` 
-                (`PID`, `Fecha_compra`, `totalPagar`, `cuotas`, `cuotas_pagadas`, `ID_TARJETA`) 
-                VALUES (NULL, date(DATE_RFC2822), $precio, $numCuotas, '0', $numTarjeta);";
+            $date = date('Y-m-d H:i:s');
+
+                $sql = "INSERT 
+                INTO `compras` (`PID`, `Fecha_compra`, `totalPagar`, `cuotas`, `cuotas_pagadas`, `ID_TARJETA`) 
+                VALUES (NULL, '$date', $precio, $numCuotas, '0', $numTarjeta);";
 
                 $resultado = mysqli_query($con,$sql );
                 if(mysqli_affected_rows($con) !== 0){
-                    $errRetiro = "Transaccion exitosa";
+                    $errRetiro = "Transaccion existosa";
                 }else{
                     $errRetiro = "Cuenta inexistente";
                 }
