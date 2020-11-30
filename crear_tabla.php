@@ -39,7 +39,8 @@
     Tasa_interes NUMERIC(5,2),
     Saldo NUMERIC(10,2),
     Estado CHAR(15),
-    Fecha_pago DATE,
+    Fecha_pago INT,
+    Meses INT,
     Correo_notificaciones VARCHAR(100),
     ID_USUARIO INT,
     FOREIGN key(ID_USUARIO) references Usuario(PID) ON DELETE CASCADE
