@@ -67,7 +67,7 @@
                 ?>
             </select><br>
             <label for="cantidad">Cantidad</label><br>
-            <input type="text" name="cantidad"><br>
+            <input type="number" min="10" step=1 name="cantidad" id="cantidad"><br>
             <label for="cuentaDestino">ID cuenta destino</label><br>
             <input type="text" name="cuentaDestino"><br>
             <input type="submit" value="Transferir" name="SubmitButton">

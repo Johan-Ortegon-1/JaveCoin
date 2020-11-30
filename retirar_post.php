@@ -21,7 +21,7 @@
 			$errRetiro = "Transaccion declinada: Ingrese una cantidad valida";
 		}
 
-		else if (!preg_match("/^[0-9]*$/",$cantidad))
+		else if (!preg_match("/^[0-9]*(.[0-9])?$/",$cantidad))
 		{
 			$errRetiro = "Transaccion declinada: Ingrese una cantidad valida";
 		}
@@ -31,7 +31,7 @@
 		    //busco la cuenta relacionada con el ID del usuario
 		    $sql = "UPDATE `cuenta` 
 		    SET Saldo = CASE
-	  			 WHEN (Saldo-$cantidad)>0 THEN Saldo-$cantidad
+	  			 WHEN (Saldo-$cantidad)>=0 THEN Saldo-$cantidad
 	  			 ELSE Saldo
 	  			 END
 		    WHERE `PID` = $cuenta";

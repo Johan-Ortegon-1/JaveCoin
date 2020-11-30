@@ -66,7 +66,7 @@
                 ?>
             </select><br>
             <label for="cantidad">Cantidad:</label><br>
-            <input type="text" name="cantidad"><br>
+            <input type="number" min="10" step=1 name="cantidad" id="cantidad">
             <input type="submit" value="Retirar" name="SubmitButton">
         </form>
 
