@@ -8,6 +8,14 @@ define('ESTADO_INICIAL', 'Espera');
 define('ESTADO_APROBADO', 'Aprobado');
 define('TASA_INTERES_GENERAL', 0.2);
 
+//Encriptar password
 define('EASY_CRYPT', 'patataSalvaje');
+
+//Manejo de tarjeta
+define('CUPO_INICIAL', 1000);
+define('SOBRE_CUPO_INICIAL', 1500);
+
+//Manejo Creditos
+define('MESES_GENERAL', 4);
 ?>
 

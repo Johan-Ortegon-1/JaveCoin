@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1>Editar Cuenta</h1>
-    <input type='button' value='Regresar al index' onclick="document.location.href='index.php';" />
+    <input type='button' value='Regresar a Administrar' onclick="document.location.href='administrar.php';" />
     <form action="<?= $_SERVER["PHP_SELF"]; ?>" method="post">
         <label for="ID">ID(Numero de la cuenta)</label><br>
         <input type="text" name="ID"><br>
@@ -19,7 +19,6 @@
         <label for="ID_USUARIO">ID del usuario</label><br>
         <input type="number" name="ID_USUARIO"><br>
 
-        <select name="tipoMoneda" id="tipoMoneda">
             <input type="submit" value="Editar" name="SubmitButton">
     </form>
     <br>
@@ -58,6 +57,61 @@ if (isset($_SESSION['logeado'])) {
 } else {
     echo "Este funcion es exclusiva para Administradores.";
 }
+read_cuentas();
+function read_cuentas(){
+    include_once dirname(__FILE__) . '/config.php';
+    if(isset($_SESSION['currentUserID']) or isset($_SESSION['currentUserRol']))
+    {
+        $id = $_SESSION['currentUserID'];
+    }else{
+        echo "No se ha podido identificar al usuario registrado.";
+    }
+    $str_datos = "";
+    $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
+    if (mysqli_connect_errno()) {
+        $str_datos .= "Error en la conexión: " . mysqli_connect_error();
+    } else {
+        $str_datos .= '<table border="1" style="width:100%">';
+        $str_datos .= '<tr>';
+        $str_datos .= '<th>PID</th>';
+        $str_datos .= '<th>Saldo</th>';
+        $str_datos .= '<th>Cuota manejo</th>';
+        $str_datos .= '</tr>';
+
+        //echo $id;
+        $sql = "SELECT * FROM `cuenta` "; //WHERE `ID_USUARIO` = $_SESSION['user']";
+        //echo $sql;
+    }
+    $retorno = " ";
+    $contador = 0; //Contador para colocar los OR. 
+    $arreglo []=[];
+    $resultado = mysqli_query($con, $sql);
+    if (mysqli_query($con, $sql)) {
+        while ($fila = mysqli_fetch_array($resultado)) {
+            if ($contador > 0) {
+                $retorno .= " OR ";
+            }
+        //$arreglo [$contador] = $fila['PID'];
+         $retorno .= "(`ID_CUENTA` = '{$fila['PID']}')";
+         $contador++;
+            $str_datos .= '<tr>';
+            $str_datos .=
+                "<td>{$fila['PID']}</td>
+                      <td>{$fila['Saldo']}</td> 
+                      <td>{$fila['Cuota_manejo']}</td>";
+            $str_datos .= "</tr>";
+           
+        }
+        $str_datos .= "</table>";
+        echo "<h3>Estas son todas las cuentas de ahorro existentes en nuestro banco. Recuerda que puedes editar uno o varios campos </h3>";
+        echo $str_datos;
+        mysqli_close($con);
+    } else {
+        echo "Error en la seleccion " . mysqli_error($con);
+    }
+    //$retorno =  "(`ID_CUENTA` = 1) OR (`ID_CUENTA` = 3)";
+   // return $retorno ;
+}
 
 function update_cuenta()
 {
@@ -88,8 +142,8 @@ function update_cuenta()
         $contador++;
     }
     if ($contador > 0) { //Asegurarse de que modifique al menos un campo
-        $str_datos .= " WHERE `cuenta`.`PID` = 1;"; //CAMBIAR AQUI A ID DEL USUARIO.
-        echo $str_datos; //UPDATE `cuenta` SET `Saldo` = '10196.01', `Cuota_manejo` = '11.02', `ID_USUARIO` = '2' WHERE `cuenta`.`PID` = 1;
+        $str_datos .= " WHERE `cuenta`.`PID` = {$_POST["ID"]};"; //CAMBIAR AQUI A ID DEL USUARIO.
+       // echo $str_datos; //UPDATE `cuenta` SET `Saldo` = '10196.01', `Cuota_manejo` = '11.02', `ID_USUARIO` = '2' WHERE `cuenta`.`PID` = 1;
         echo "<br>";
         $sql = $str_datos; 
         if (mysqli_query($con, $sql)) {

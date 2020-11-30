@@ -11,6 +11,7 @@
 
 <body>
     <h1>Ver mis productos</h1>
+    <h3>Bienvenido, aqui puedes ver todos tus productos presentes en nuestro banco</h3>
     <input type='button' value='Regresar al index' onclick="document.location.href='index.php';" />
 </body>
 
@@ -20,12 +21,14 @@
 $_SESSION['logeado'] = true;
 if (isset($_SESSION['logeado'])) {
     echo "<br>";
+
     echo "<br>";
     //read_usuarios();
     echo "<h2> Cuentas de ahorro</h2>";
-    read_cuentas();
+    $cuentas =  read_cuentas();
     echo "<h2> Tarjetas de Credito</h2>";
-    read_tarjetas();
+    //echo $cuentas;
+    read_tarjetas($cuentas);
     echo "<h2> Creditos</h2>";
     read_creditos();    
 } else {
@@ -36,10 +39,12 @@ if (isset($_SESSION['logeado'])) {
 function read_creditos(){
     include_once dirname(__FILE__) . '/config.php';
     $id = 0;
-    echo $_SESSION['currentUserID'];
-    if(!isset($_SESSION['currentUserID']) or !isset($_SESSION['currentUserRol']))
+    //echo $_SESSION['currentUserID'];
+    if(isset($_SESSION['currentUserID']) or isset($_SESSION['currentUserRol']))
     {
         $id = $_SESSION['currentUserID'];
+    }else{
+        echo "No se ha podido identificar al usuario registrado.";
     }
     $str_datos = "";
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
@@ -79,13 +84,15 @@ function read_creditos(){
 
 }
 
-function read_tarjetas(){
+function read_tarjetas($cuentas){
     include_once dirname(__FILE__) . '/config.php';
-    $id = 0;
-    if(!isset($_SESSION['currentUserID']) or !isset($_SESSION['currentUserRol']))
+    /*$id = 0;
+    if(isset($_SESSION['currentUserID']) or isset($_SESSION['currentUserRol']))
     {
         $id = $_SESSION['currentUserID'];
-    }
+    }else{
+        echo "No se ha podido identificar al usuario registrado.";
+    }*/
     $str_datos = "";
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
     if (mysqli_connect_errno()) {
@@ -101,7 +108,7 @@ function read_tarjetas(){
         $str_datos .= '<th>Estado</th>';
         $str_datos .= '</tr>';
 
-        $sql = "SELECT * FROM `tarjeta_credito` WHERE `ID_CUENTA` = $id"; //WHERE `ID_CUENTA` = $_SESSION['numero de la cuenta jaja']";
+        $sql = "SELECT * FROM `tarjeta_credito` WHERE $cuentas"; //WHERE `ID_CUENTA` = $_SESSION['numero de la cuenta jaja']";
     }
 
     $resultado = mysqli_query($con, $sql);
@@ -127,10 +134,11 @@ function read_tarjetas(){
 
 function read_cuentas(){
     include_once dirname(__FILE__) . '/config.php';
-    $id = 0;
-    if(!isset($_SESSION['currentUserID']) or !isset($_SESSION['currentUserRol']))
+    if(isset($_SESSION['currentUserID']) or isset($_SESSION['currentUserRol']))
     {
         $id = $_SESSION['currentUserID'];
+    }else{
+        echo "No se ha podido identificar al usuario registrado.";
     }
     $str_datos = "";
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
@@ -144,19 +152,29 @@ function read_cuentas(){
         $str_datos .= '<th>Cuota manejo</th>';
         $str_datos .= '</tr>';
 
-        echo $id;
+        //echo $id;
         $sql = "SELECT * FROM `cuenta` WHERE `ID_USUARIO` = $id"; //WHERE `ID_USUARIO` = $_SESSION['user']";
+        //echo $sql;
     }
-
+    $retorno = " ";
+    $contador = 0; //Contador para colocar los OR. 
+    $arreglo []=[];
     $resultado = mysqli_query($con, $sql);
     if (mysqli_query($con, $sql)) {
         while ($fila = mysqli_fetch_array($resultado)) {
+            if ($contador > 0) {
+                $retorno .= " OR ";
+            }
+        //$arreglo [$contador] = $fila['PID'];
+         $retorno .= "(`ID_CUENTA` = '{$fila['PID']}')";
+         $contador++;
             $str_datos .= '<tr>';
             $str_datos .=
                 "<td>{$fila['PID']}</td>
                       <td>{$fila['Saldo']}</td> 
                       <td>{$fila['Cuota_manejo']}</td>";
             $str_datos .= "</tr>";
+           
         }
         $str_datos .= "</table>";
         echo $str_datos;
@@ -164,6 +182,8 @@ function read_cuentas(){
     } else {
         echo "Error en la seleccion " . mysqli_error($con);
     }
+    //$retorno =  "(`ID_CUENTA` = 1) OR (`ID_CUENTA` = 3)";
+    return $retorno ;
 }
 
 function read_usuarios(){

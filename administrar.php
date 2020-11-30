@@ -30,13 +30,14 @@ $_SESSION['logeado'] = true;
 if (isset($_SESSION['logeado'])) {
     echo "<br>";
     read_creditos();
+    
 } else {
     echo "Este funcion es exclusiva para Administradores.";
 }
 
-function read_creditos()
+function read_creditos() //LAMAR DE PRIMERO A LA TABLA PARA EVITAR REFRESCAR. 
 {
-
+    update_creditos();
     include_once dirname(__FILE__) . '/config.php';
     $str_datos = "";
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
@@ -74,6 +75,11 @@ function read_creditos()
             $str_datos .= '" value="';
             $str_datos .= $fila['PID'];
             $str_datos .= '">Aprobar</label><br>';
+            $str_datos .= '<label><input type="checkbox" name="dbox';
+            $str_datos .= $fila['PID'];
+            $str_datos .= '" value="';
+            $str_datos .= $fila['PID'];
+            $str_datos .= '">Por Defecto</label><br>';
             $str_datos .= '</td> </tr>';
             $str_datos .= '<input type="hidden" name="contador" value="' . $fila['PID'] . '" />';
             $contador++;
@@ -83,7 +89,7 @@ function read_creditos()
         $str_datos .= '<input type="submit" value="Enviar" name="SubmitButton"> </form>';
         echo $str_datos;
         mysqli_close($con);
-        update_creditos();
+        //update_creditos();
     } else {
         echo "Error en la seleccion " . mysqli_error($con);
     }
@@ -98,8 +104,8 @@ function update_creditos()
         $inicial = " '".ESTADO_INICIAL."'" ;
         $tasa = " '".TASA_INTERES_GENERAL."'";
         $aprobado =  " '".ESTADO_APROBADO."'";
-        echo $inicial;
-        echo $tasa;
+        //echo $inicial;
+        //echo $tasa;
         echo "<br>";
         if (mysqli_connect_errno()) {
             echo "Error en la conexión: " . mysqli_connect_error();
@@ -107,7 +113,7 @@ function update_creditos()
         // Arreglar aqui    
 
         $sql = "SELECT * FROM `credito` WHERE `Estado` = $inicial "; //MODIFICAR AQUI
-        echo $sql;
+        //echo $sql;
         echo "<br>";
         $resultado = mysqli_query($con, $sql);
         if (mysqli_query($con, $sql)) {
@@ -115,19 +121,28 @@ function update_creditos()
                 $cadena = "cbox" . $fila['PID'];
                 if (isset($_POST[$cadena])) { //Creacion de la cadena de sql de acuerdo a los datos que se modificaron:
                     $str_datos = "UPDATE `credito` SET  `Estado`= $aprobado WHERE `credito`.`PID` = " . $fila['PID'] . "; ";
-                    echo $str_datos;
+                   // echo $str_datos;
                     echo "El credito " . $fila['PID'] . " ha sido aprobado";
                     //echo "<br>";
+                    $sql = $str_datos;
                 } else {
-                    $str_datos = "UPDATE `credito` SET  `Estado`= $aprobado, `Tasa_interes`= $tasa  WHERE `credito`.`PID` = " . $fila['PID'] . "; ";
+                    $cadena = "dbox" . $fila['PID'];
+                    if (isset($_POST[$cadena])) { //Por defecto
+                        $str_datos = "UPDATE `credito` SET  `Estado`= $aprobado, `Tasa_interes`= $tasa  WHERE `credito`.`PID` = " . $fila['PID'] . "; ";
+                       // echo $str_datos;
+                        echo "El credito " . $fila['PID'] . " ha sido aprobado con los valores estandar";
+                        //echo "<br>";
+                        $sql = $str_datos;
+                    }
+                    /*$str_datos = "UPDATE `credito` SET  `Estado`= $aprobado, `Tasa_interes`= $tasa  WHERE `credito`.`PID` = " . $fila['PID'] . "; ";
                     echo $str_datos;
                     echo "El credito " . $fila['PID'] . "  NO ha sido aprobado y se le ha asignado el valor estandar";
-                    echo "<br>";
+                    echo "<br>";*/
                 }
                 $sql = $str_datos;
 
                 if (mysqli_query($con, $sql)) {
-                    echo "El credito " . $fila['PID'] . " ha sido aprobado";
+                    //echo "El credito " . $fila['PID'] . " ha sido aprobado";
                     echo "<br>";
                 } else {
                     echo "Es probable que haya ocurrio un error";
