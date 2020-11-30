@@ -43,7 +43,7 @@ function read_creditos()
     if (mysqli_connect_errno()) {
         $str_datos .= "Error en la conexión: " . mysqli_connect_error();
     } else {
-        $str_datos .= "<form action='<?= {$_SERVER['PHP_SELF']};?>' method='post'>";
+        $str_datos .= "<form action=\"administrar.php\" method=\"POST\">";
         $str_datos .= '<table border="1" style="width:100%">';
         $str_datos .= '<tr>';
         $str_datos .= '<th>PID</th>';

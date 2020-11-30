@@ -19,6 +19,7 @@
         $vistaHTMLGeneral .= "<h3>Funciones del Cliente</h3>
         <input type='button'value='Crear una cuenta de ahorros' onclick=\"document.location.href='crear_cuenta_ahorros.php';\"/>
         <input type='button'value='Retirar' onclick=\"document.location.href='retirar.php';\"/>
+        <input type='button'value='Consignar' onclick=\"document.location.href='consignar.php';\"/>
         <input type='button'value='Sacar una credito' onclick=\"document.location.href='sacar_credito.php';\"/>
         <input type='button'value='Sacar una tarjeta' onclick=\"document.location.href='sacar_tarjeta.php';\"/>
         <input type='button'value='Comprar con tarjeta' onclick=\"document.location.href='comprar_con_tarjeta.php';\"/>

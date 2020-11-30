@@ -11,6 +11,9 @@ session_start();
     $saldo = "";
     include_once dirname(__FILE__) . '/config.php';
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
+    $estado_inicial = ESTADO_INICIAL;
+    $tasa_inicial = TASA_INTERES_GENERAL;
+
     if ($_SERVER["REQUEST_METHOD"] == "POST")
     {
         if(!isset($_POST['saldo']))
@@ -24,10 +27,11 @@ session_start();
                 $mssSacarCredito = "El correo es requerido al se un visitante";
                 $flagError = true;
             }
-            else{
+            else
+            {
                 $saldo = $_POST['saldo'];
                 $email = $_POST['email'];
-                $sql = "INSERT INTO Credito (Tasa_interes, Saldo, Estado, Fecha_pago, Correo_notificaciones, ID_USUARIO) VALUES (-10.0, $saldo, \"No aprovado\", \'2008-11-11\', $email, \"NULL\")";
+                $sql = "INSERT INTO Credito (Tasa_interes, Saldo, Estado, Fecha_pago, Correo_notificaciones) VALUES ($tasa_inicial, $saldo, \"$estado_inicial\", \"2008-11-11\", \"$email\")";
                 if(mysqli_query($con,$sql)){
                     $mssSacarCredito = "Se ha creado el crediro para el visitante ";
                 }
@@ -47,7 +51,7 @@ session_start();
             else{
                 $saldo = $_POST['saldo'];
                 $tasa = $_POST['tasa'];
-                $sql = "INSERT INTO Credito (Tasa_interes, Saldo, Estado, Fecha_pago, Correo_notificaciones, ID_USUARIO) VALUES ($tasa, $saldo, \"No aprovado\", \"2008-11-11\", \"NULL\", $IDUsuario)";
+                $sql = "INSERT INTO Credito (Tasa_interes, Saldo, Estado, Fecha_pago, ID_USUARIO) VALUES ($tasa, $saldo, \"$estado_inicial\", \"2008-11-11\", $IDUsuario)";
                 if(mysqli_query($con,$sql)){
                     $mssSacarCredito = "Se ha creado el crediro, esperando respuesta del Administrador ";
                 }
