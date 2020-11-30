@@ -21,13 +21,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d85a536b-3b75-4932-8a13-f402d1c3f9fd" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/comprar_post.php" beforeDir="false" afterPath="$PROJECT_DIR$/comprar_post.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/consignar.php" beforeDir="false" afterPath="$PROJECT_DIR$/consignar.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/consignar_post.php" beforeDir="false" afterPath="$PROJECT_DIR$/consignar_post.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/retirar.php" beforeDir="false" afterPath="$PROJECT_DIR$/retirar.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/retirar_post.php" beforeDir="false" afterPath="$PROJECT_DIR$/retirar_post.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transferir.php" beforeDir="false" afterPath="$PROJECT_DIR$/transferir.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transferir_post.php" beforeDir="false" afterPath="$PROJECT_DIR$/transferir_post.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/administrar.php" beforeDir="false" afterPath="$PROJECT_DIR$/administrar.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
