@@ -1,7 +1,7 @@
 <?php
+
     include_once dirname(__FILE__) . '/config.php';
-    $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
-    $sql = "CREATE TABLE Usuario 
+    $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);$sql = "CREATE TABLE Usuario
     (
     PID INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY(PID),
@@ -30,7 +30,7 @@
         echo "Error en la creacion Producto" . mysqli_error($con);
     }
 
-    $sql = "CREATE TABLE Credito 
+    $sql = "CREATE TABLE Credito
     (
     PID INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY(PID),
@@ -48,7 +48,7 @@
         echo "Error en la tabla Credito" . mysqli_error($con);
     }
 
-    $sql = "CREATE TABLE Tarjeta_Credito 
+    $sql = "CREATE TABLE Tarjeta_Credito
     (
     PID INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY(PID),
@@ -64,6 +64,24 @@
         echo "Tabla Tarjeta_Credito creada correctamente";
     } else {
         echo "Error en la creacion Tarjeta_Credito" . mysqli_error($con);
+    }
+
+
+    $sql = "CREATE TABLE Compras 
+        (
+        PID INT NOT NULL AUTO_INCREMENT,
+        PRIMARY KEY(PID),
+        Fecha_compra DATE,
+        totalPagar NUMERIC(10,2),
+        cuotas INT,
+        cuotas_pagadas INT,
+        ID_TARJETA INT NOT NULL,
+        FOREIGN key(ID_TARJETA) references Tarjeta_Credito(PID) ON DELETE CASCADE
+        )";
+    if (mysqli_query($con, $sql)) {
+        echo "Tabla Compras creada correctamente";
+    } else {
+        echo "Error en la creacion Compras" . mysqli_error($con);
     }
 ?>
 <input type='button'value='Regresar al index' onclick="document.location.href='index.php';"/>

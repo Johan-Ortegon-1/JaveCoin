@@ -1,10 +1,123 @@
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Administrar</title>
-    </head>
-    <body>
-        <h1>Administrar</h1>
-        <input type='button'value='Regresar al index' onclick="document.location.href='index.php';"/>
-    </body>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Administrar</title>
+</head>
+
+<body>
+    <h1>Administrar</h1>
+    <input type='button' value='Regresar al index' onclick="document.location.href='index.php';" />
+    <br><br>
+    <input type='button' value='Editar un Cliente' onclick="document.location.href='editar_usuarios.php';" />
+    <input type='button' value='Editar una cuenta' onclick="document.location.href='editar_cuenta.php';" />
+    <input type='button' value='Editar una tarjeta' onclick="document.location.href='editar_tarjeta.php';" />
+    <input type='button' value='Editar un credito' onclick="document.location.href='editar_credito.php';" />
+     
+    <br>
+    <h2>Creditos a aprobar</h2>
+    <p>Seleccione los creditos que desea aprobar y luego de click en el boton de enviar.
+         Sera necesario actualizar la pagina par ver los cambios.</p>
+
+</body>
+
 </html>
+
+<?php
+session_start();
+//Asegurarse que el user esta logeado
+$_SESSION['logeado'] = true;
+if (isset($_SESSION['logeado'])) {
+    echo "<br>";
+    read_creditos();
+} else {
+    echo "Este funcion es exclusiva para clientes.";
+}
+
+function read_creditos()
+{
+
+    include_once dirname(__FILE__) . '/config.php';
+    $str_datos = "";
+    $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
+    if (mysqli_connect_errno()) {
+        $str_datos .= "Error en la conexión: " . mysqli_connect_error();
+    } else {
+        $str_datos .= "<form action='<?= {$_SERVER['PHP_SELF']};?>' method='post'>";
+        $str_datos .= '<table border="1" style="width:100%">';
+        $str_datos .= '<tr>';
+        $str_datos .= '<th>PID</th>';
+        $str_datos .= '<th>Tasa de interes</th>';
+        $str_datos .= '<th>Saldo</th>';
+        $str_datos .= '<th>Estado</th>';
+        $str_datos .= '<th>Fecha de pago</th>';
+        $str_datos .= '<th>Acciones</th>';
+        $str_datos .= '</tr>';
+
+        $sql = "SELECT * FROM `credito` WHERE `ESTADO` = 'a'"; //WHERE `ID_USUARIO` = $_SESSION['user']";
+    }
+    $contador = 0;
+    $resultado = mysqli_query($con, $sql);
+    if (mysqli_query($con, $sql)) {
+        while ($fila = mysqli_fetch_array($resultado)) {
+            $str_datos .= '<tr>';
+            $str_datos .=
+                "<td>{$fila['PID']}</td>
+                      <td>{$fila['Tasa_interes']}</td> 
+                      <td>{$fila['Saldo']}</td>
+                      <td>{$fila['Estado']}</td>
+                      <td>{$fila['Fecha_pago']}</td>";
+            $str_datos .= '<td>';
+            $str_datos .= '<label><input type="checkbox" name="cbox';
+            $str_datos .= $fila['PID'];
+            $str_datos .= '" value="';
+            $str_datos .= $fila['PID'];
+            $str_datos .= '">Aprobar</label><br>';
+            $str_datos .= '</td> </tr>';
+            $str_datos .= '<input type="hidden" name="contador" value="' .$fila['PID'] . '" />';
+            $contador++;
+        }
+        $str_datos .= "</table>";
+        
+        $str_datos .= '<input type="submit" value="Enviar" name="SubmitButton"> </form>';
+        echo $str_datos;
+        mysqli_close($con);
+        update_creditos();
+    } else {
+        echo "Error en la seleccion " . mysqli_error($con);
+    }
+}
+
+function update_creditos()
+{
+    $iterador = 0;
+    //var_dump($_POST)[1]; Solucion a que el iterador vaya hasta la id mas alta esta aqui, de alguna manera
+    
+    if (isset($_POST['contador'])) {
+        // echo $_POST['contador'];
+        while ($iterador < $_POST['contador']) {
+            $iterador++;
+            $cadena = "cbox" . $iterador;
+            if (isset($_POST[$cadena])) {
+                echo "<br>";
+                include_once dirname(__FILE__) . '/config.php';
+                $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
+                if (mysqli_connect_errno()) {
+                    echo "Error en la conexión: " . mysqli_connect_error();
+                }
+                //Creacion de la cadena de sql de acuerdo a los datos que se modificaron:
+                $str_datos = "UPDATE `credito` SET  `Estado`= 'o'  WHERE `credito`.`PID` = " . $_POST[$cadena] . "; ";
+
+                $sql = $str_datos;
+                if (mysqli_query($con, $sql)) {
+                    echo "El credito " . $_POST[$cadena] . " ha sido aprobado";
+                    echo "<br>";
+                } else {
+                    echo "El credito " . $_POST[$cadena] . "  NO ha sido aprobado, es probable que haya ocurrio un error";
+                    echo "<br>";
+                }
+            }
+        }
+    }
+}
+?>
