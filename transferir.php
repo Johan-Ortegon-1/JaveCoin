@@ -1,3 +1,9 @@
+<?php
+    session_start();
+    $idUsuario = $_SESSION['currentUserID']
+?>
+
+
 <html>
     <head>
         <meta charset="UTF-8">
@@ -23,7 +29,7 @@
             $error = "Error en la conexión: ";
         }else {
             //busco las cuentas del usuario
-            $sql = "SELECT * FROM `cuenta` WHERE `ID_USUARIO` = 1";
+            $sql = "SELECT * FROM `cuenta` WHERE `ID_USUARIO` = $idUsuario";
 
             $resultado = mysqli_query($con,$sql );
 

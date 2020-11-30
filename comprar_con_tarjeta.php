@@ -1,3 +1,8 @@
+<?php
+    session_start();
+    $idUsuario = $_SESSION['currentUserID']
+?>
+
 <html>
     <head>
         <meta charset="UTF-8">
@@ -7,6 +12,7 @@
         <h1>Comprar con tarjeta</h1>
 
         <?php
+        $mostrarBuscar = false;
         include_once dirname(__FILE__) . '/config.php';
         $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
 
@@ -15,16 +21,23 @@
             $error = "Error en la conexión: ";
         }else {
             //busco las cuentas del usuario
-            $sql = "SELECT * FROM `tarjeta_credito` WHERE `ID_CUENTA` = 1";
+            $sql = "SELECT * FROM `cuenta` WHERE `ID_USUARIO` = $idUsuario";
 
             $resultado = mysqli_query($con,$sql );
-
             $tarjetas = "";
             while($fila = mysqli_fetch_array($resultado)) {
-                $tarjetas .= "
-                        <option value=\"$fila[PID]\">$fila[PID]</option>
+
+                $sql = "SELECT * FROM `tarjeta_credito` WHERE `ID_CUENTA` = $fila[PID]";
+                $resultado2 = mysqli_query($con,$sql );
+                while($fila2 = mysqli_fetch_array($resultado2)) {
+                    $tarjetas .= "
+                        <option value=\"$fila2[PID]\">$fila2[PID]</option>
                     ";
+                }
+
             }
+
+
         }
         ?>
 
@@ -44,13 +57,12 @@
                 >COP
                 </option>
             </select><br>
-            <label for="numTarjeta">Numero tarjeta:</label>
+            <label for="numTarjeta">Tarjeta para pagar:</label>
             <select name ="numTarjeta" id="numTarjeta">
                 <?php
                     echo $tarjetas;
                 ?>
             </select><br>
-
             <label for="numCuotas">Cuotas:</label>
             <select name ="numCuotas" id="numCuotas">
                 <option value="1">1</option>
