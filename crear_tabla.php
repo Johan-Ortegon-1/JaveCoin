@@ -1,12 +1,14 @@
 <?php
 
     include_once dirname(__FILE__) . '/config.php';
-    $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);$sql = "CREATE TABLE Usuario
+    $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
+    $sql = "CREATE TABLE Usuario
     (
     PID INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY(PID),
     Nombre CHAR(15),
     Contrasena VARCHAR(100),
+    Correo VARCHAR(100),
     Rol CHAR(15)
     )";
     if (mysqli_query($con, $sql)) {

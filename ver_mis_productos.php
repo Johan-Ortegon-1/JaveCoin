@@ -1,3 +1,7 @@
+<?php
+    session_start();
+    
+?>
 <html>
 
 <head>
@@ -12,13 +16,12 @@
 
 </html>
 <?php
-session_start();
 //Asegurarse que el user esta logeado
 $_SESSION['logeado'] = true;
 if (isset($_SESSION['logeado'])) {
     echo "<br>";
     echo "<br>";
-    read_usuarios();
+    //read_usuarios();
     echo "<h2> Cuentas de ahorro</h2>";
     read_cuentas();
     echo "<h2> Tarjetas de Credito</h2>";
@@ -32,6 +35,12 @@ if (isset($_SESSION['logeado'])) {
 //FUNCIONES
 function read_creditos(){
     include_once dirname(__FILE__) . '/config.php';
+    $id = 0;
+    echo $_SESSION['currentUserID'];
+    if(!isset($_SESSION['currentUserID']) or !isset($_SESSION['currentUserRol']))
+    {
+        $id = $_SESSION['currentUserID'];
+    }
     $str_datos = "";
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
     if (mysqli_connect_errno()) {
@@ -46,7 +55,7 @@ function read_creditos(){
         $str_datos .= '<th>Fecha de pago</th>';
         $str_datos .= '</tr>';
 
-        $sql = "SELECT * FROM `credito` WHERE `ID_USUARIO` = 1"; //WHERE `ID_USUARIO` = $_SESSION['user']";
+        $sql = "SELECT * FROM `credito` WHERE `ID_USUARIO` = $id"; //WHERE `ID_USUARIO` = $_SESSION['user']";
     }
 
     $resultado = mysqli_query($con, $sql);
@@ -72,6 +81,11 @@ function read_creditos(){
 
 function read_tarjetas(){
     include_once dirname(__FILE__) . '/config.php';
+    $id = 0;
+    if(!isset($_SESSION['currentUserID']) or !isset($_SESSION['currentUserRol']))
+    {
+        $id = $_SESSION['currentUserID'];
+    }
     $str_datos = "";
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
     if (mysqli_connect_errno()) {
@@ -87,7 +101,7 @@ function read_tarjetas(){
         $str_datos .= '<th>Estado</th>';
         $str_datos .= '</tr>';
 
-        $sql = "SELECT * FROM `tarjeta_credito` WHERE `ID_CUENTA` = 1"; //WHERE `ID_CUENTA` = $_SESSION['numero de la cuenta jaja']";
+        $sql = "SELECT * FROM `tarjeta_credito` WHERE `ID_CUENTA` = $id"; //WHERE `ID_CUENTA` = $_SESSION['numero de la cuenta jaja']";
     }
 
     $resultado = mysqli_query($con, $sql);
@@ -113,6 +127,11 @@ function read_tarjetas(){
 
 function read_cuentas(){
     include_once dirname(__FILE__) . '/config.php';
+    $id = 0;
+    if(!isset($_SESSION['currentUserID']) or !isset($_SESSION['currentUserRol']))
+    {
+        $id = $_SESSION['currentUserID'];
+    }
     $str_datos = "";
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
     if (mysqli_connect_errno()) {
@@ -125,7 +144,8 @@ function read_cuentas(){
         $str_datos .= '<th>Cuota manejo</th>';
         $str_datos .= '</tr>';
 
-        $sql = "SELECT * FROM `cuenta` WHERE `ID_USUARIO` = 1"; //WHERE `ID_USUARIO` = $_SESSION['user']";
+        echo $id;
+        $sql = "SELECT * FROM `cuenta` WHERE `ID_USUARIO` = $id"; //WHERE `ID_USUARIO` = $_SESSION['user']";
     }
 
     $resultado = mysqli_query($con, $sql);

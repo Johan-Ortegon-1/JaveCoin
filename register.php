@@ -9,6 +9,8 @@
         <form action="register_post.php" method="POST">
             <label for="nombre_u">Nombre de usuario: </label><br>
             <input type="text" name="nombre_u" id="nombre_u"><br>
+            <label for="correo">Correo: </label><br>
+            <input type="text" name="correo" id="correo"><br>
             <label for="password">Contraseña: </label><br>
             <input type="password" name="password" id="password"><br>
             <label for="rol">Rol asignado: </label>

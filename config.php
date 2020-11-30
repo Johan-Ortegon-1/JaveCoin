@@ -8,3 +8,6 @@ define('ESTADO_INICIAL', 'Espera');
 define('ESTADO_APROBADO', 'Aprobado');
 define('TASA_INTERES_GENERAL', 0.2);
 
+define('EASY_CRYPT', 'patataSalvaje');
+?>
+
