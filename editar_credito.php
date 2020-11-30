@@ -135,4 +135,39 @@ function update_credito()
         echo "Debes modificar al menos un campo.";
     }
 }
+
+function update_creditos()
+{
+    //var_dump($_POST)[1]; Solucion a que el iterador vaya hasta la id mas alta esta aqui, de alguna manera
+    if (isset($_POST['contador'])) {
+        echo "<br>";
+        include_once dirname(__FILE__) . '/config.php';
+        $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
+        if (mysqli_connect_errno()) {
+            echo "Error en la conexión: " . mysqli_connect_error();
+        }
+        // Arreglar aqui    
+        $sql = "SELECT * FROM `credito` WHERE `ESTADO` = 'o'"; //MODIFICAR AQUI
+        //$resultado = mysqli_query($con, $sql);
+        if (mysqli_query($con, $sql)) {
+            while ($fila = mysqli_fetch_array($resultado)) {
+                $cadena = "cbox" . $fila['PID'];
+                if (isset($_POST[$cadena])) { //Creacion de la cadena de sql de acuerdo a los datos que se modificaron:
+                    $str_datos = "UPDATE `credito` SET  `Estado`= 'a'  WHERE `credito`.`PID` = " . $_POST[$cadena] . "; ";
+                } else {
+                    $str_datos = "UPDATE `credito` SET  `Estado`= 'o', `Tasa_interes`= '0.69'   WHERE `credito`.`PID` = " . $_POST[$cadena] . "; ";
+                }
+                $sql = $str_datos;
+
+                if (mysqli_query($con, $sql)) {
+                    echo "El credito " . $_POST[$cadena] . " ha sido aprobado";
+                    echo "<br>";
+                } else {
+                    echo "El credito " . $_POST[$cadena] . "  NO ha sido aprobado, es probable que haya ocurrio un error";
+                    echo "<br>";
+                }
+            }
+        }
+    }
+}
 ?>

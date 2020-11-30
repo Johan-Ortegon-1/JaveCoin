@@ -13,12 +13,11 @@
     <input type='button' value='Editar una cuenta' onclick="document.location.href='editar_cuenta.php';" />
     <input type='button' value='Editar una tarjeta' onclick="document.location.href='editar_tarjeta.php';" />
     <input type='button' value='Editar un credito' onclick="document.location.href='editar_credito.php';" />
-     
+
     <br>
     <h2>Creditos a aprobar</h2>
-    <p>Seleccione los creditos que desea aprobar y luego de click en el boton de enviar.
-         Sera necesario actualizar la pagina par ver los cambios.</p>
-
+    <p>Seleccione los creditos que desea aprobar y luego de click en el boton de enviar, aquellos que no sean aprobados
+        seran rechazados y asignados con el valor estandar. Sera necesario actualizar la pagina par ver los cambios.</p>
 </body>
 
 </html>
@@ -31,7 +30,7 @@ if (isset($_SESSION['logeado'])) {
     echo "<br>";
     read_creditos();
 } else {
-    echo "Este funcion es exclusiva para clientes.";
+    echo "Este funcion es exclusiva para Administradores.";
 }
 
 function read_creditos()
@@ -40,6 +39,7 @@ function read_creditos()
     include_once dirname(__FILE__) . '/config.php';
     $str_datos = "";
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
+    $inicial =ESTADO_INICIAL ;
     if (mysqli_connect_errno()) {
         $str_datos .= "Error en la conexión: " . mysqli_connect_error();
     } else {
@@ -54,7 +54,7 @@ function read_creditos()
         $str_datos .= '<th>Acciones</th>';
         $str_datos .= '</tr>';
 
-        $sql = "SELECT * FROM `credito` WHERE `ESTADO` = 'a'"; //WHERE `ID_USUARIO` = $_SESSION['user']";
+        $sql = "SELECT * FROM `credito` WHERE `ESTADO` = '$inicial' "; //WHERE `ID_USUARIO` = $_SESSION['user']"; MODIFICAR AQUI
     }
     $contador = 0;
     $resultado = mysqli_query($con, $sql);
@@ -74,11 +74,11 @@ function read_creditos()
             $str_datos .= $fila['PID'];
             $str_datos .= '">Aprobar</label><br>';
             $str_datos .= '</td> </tr>';
-            $str_datos .= '<input type="hidden" name="contador" value="' .$fila['PID'] . '" />';
+            $str_datos .= '<input type="hidden" name="contador" value="' . $fila['PID'] . '" />';
             $contador++;
         }
         $str_datos .= "</table>";
-        
+
         $str_datos .= '<input type="submit" value="Enviar" name="SubmitButton"> </form>';
         echo $str_datos;
         mysqli_close($con);
@@ -90,30 +90,46 @@ function read_creditos()
 
 function update_creditos()
 {
-    $iterador = 0;
-    //var_dump($_POST)[1]; Solucion a que el iterador vaya hasta la id mas alta esta aqui, de alguna manera
-    
     if (isset($_POST['contador'])) {
-        // echo $_POST['contador'];
-        while ($iterador < $_POST['contador']) {
-            $iterador++;
-            $cadena = "cbox" . $iterador;
-            if (isset($_POST[$cadena])) {
-                echo "<br>";
-                include_once dirname(__FILE__) . '/config.php';
-                $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
-                if (mysqli_connect_errno()) {
-                    echo "Error en la conexión: " . mysqli_connect_error();
-                }
-                //Creacion de la cadena de sql de acuerdo a los datos que se modificaron:
-                $str_datos = "UPDATE `credito` SET  `Estado`= 'o'  WHERE `credito`.`PID` = " . $_POST[$cadena] . "; ";
+        echo "<br>";
+        include_once dirname(__FILE__) . '/config.php';
+        $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
+        $inicial = " '".ESTADO_INICIAL."'" ;
+        $tasa = " '".TASA_INTERES_GENERAL."'";
+        $aprobado =  " '".ESTADO_APROBADO."'";
+        echo $inicial;
+        echo $tasa;
+        echo "<br>";
+        if (mysqli_connect_errno()) {
+            echo "Error en la conexión: " . mysqli_connect_error();
+        }
+        // Arreglar aqui    
 
+        $sql = "SELECT * FROM `credito` WHERE `Estado` = $inicial "; //MODIFICAR AQUI
+        echo $sql;
+        echo "<br>";
+        $resultado = mysqli_query($con, $sql);
+        if (mysqli_query($con, $sql)) {
+            while ($fila = mysqli_fetch_array($resultado)) {
+                $cadena = "cbox" . $fila['PID'];
+                if (isset($_POST[$cadena])) { //Creacion de la cadena de sql de acuerdo a los datos que se modificaron:
+                    $str_datos = "UPDATE `credito` SET  `Estado`= $aprobado WHERE `credito`.`PID` = " . $fila['PID'] . "; ";
+                    echo $str_datos;
+                    echo "El credito " . $fila['PID'] . " ha sido aprobado";
+                    //echo "<br>";
+                } else {
+                    $str_datos = "UPDATE `credito` SET  `Estado`= $aprobado, `Tasa_interes`= $tasa  WHERE `credito`.`PID` = " . $fila['PID'] . "; ";
+                    echo $str_datos;
+                    echo "El credito " . $fila['PID'] . "  NO ha sido aprobado y se le ha asignado el valor estandar";
+                    echo "<br>";
+                }
                 $sql = $str_datos;
+
                 if (mysqli_query($con, $sql)) {
-                    echo "El credito " . $_POST[$cadena] . " ha sido aprobado";
+                    echo "El credito " . $fila['PID'] . " ha sido aprobado";
                     echo "<br>";
                 } else {
-                    echo "El credito " . $_POST[$cadena] . "  NO ha sido aprobado, es probable que haya ocurrio un error";
+                    echo "Es probable que haya ocurrio un error";
                     echo "<br>";
                 }
             }
