@@ -103,5 +103,20 @@
     } else {
         echo "Error en la creacion Compras" . mysqli_error($con);
     }
+
+    $sql = "CREATE TABLE Notificaciones 
+    (
+    PID INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY(PID),
+    Fecha DATE,
+    Mensaje VARCHAR(100),
+    ID_USUARIO INT,
+    FOREIGN key(ID_USUARIO) references Usuario(PID) ON DELETE CASCADE
+    )";
+    if (mysqli_query($con, $sql)) {
+        echo "Tabla Compras creada correctamente";
+    } else {
+        echo "Error en la creacion Compras" . mysqli_error($con);
+    }
 ?>
 <input type='button'value='Regresar al index' onclick="document.location.href='index.php';"/>
