@@ -30,8 +30,8 @@
     {
         $vistaHTMLCurrentUserRol.="Administrador";
         $vistaHTMLGeneral .= "<h3>Funciones del Administrador</h3>
-        <input type='button'value='Realizar acciones de administración' onclick=\"document.location.href='administrar.php';\"/>;
-        <input type='button'value='Fin de mes' onclick=\"document.location.href='administrar.php';\"/>";
+        <input type='button'value='Realizar acciones de administración' onclick=\"document.location.href='administrar.php';\"/>
+        <input type='button'value='Fin de mes' onclick=\"document.location.href='fin_de_mes.php';\"/>";
     }   
 ?>
 <html>

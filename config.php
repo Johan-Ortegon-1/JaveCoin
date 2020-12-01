@@ -17,5 +17,9 @@ define('SOBRE_CUPO_INICIAL', 1500);
 
 //Manejo Creditos
 define('MESES_GENERAL', 4);
+
+//Manejo de transacciones
+define('RETIRAR', 'retirar');
+define('CONSIGNAR', 'consignar');
 ?>
 

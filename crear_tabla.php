@@ -1,5 +1,4 @@
 <?php
-
     include_once dirname(__FILE__) . '/config.php';
     $con = mysqli_connect(HOST_DB, USUARIO_DB, USUARIO_PASS, NOMBRE_DB);
     $sql = "CREATE TABLE Usuario
@@ -71,16 +70,34 @@
 
 
     $sql = "CREATE TABLE Compras 
-        (
-        PID INT NOT NULL AUTO_INCREMENT,
-        PRIMARY KEY(PID),
-        Fecha_compra DATE,
-        totalPagar NUMERIC(10,2),
-        cuotas INT,
-        cuotas_pagadas INT,
-        ID_TARJETA INT NOT NULL,
-        FOREIGN key(ID_TARJETA) references Tarjeta_Credito(PID) ON DELETE CASCADE
-        )";
+    (
+    PID INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY(PID),
+    Fecha_compra DATE,
+    totalPagar NUMERIC(10,2),
+    cuotas INT,
+    cuotas_pagadas INT,
+    ID_TARJETA INT NOT NULL,
+    FOREIGN key(ID_TARJETA) references Tarjeta_Credito(PID) ON DELETE CASCADE
+    )";
+    if (mysqli_query($con, $sql)) {
+        echo "Tabla Compras creada correctamente";
+    } else {
+        echo "Error en la creacion Compras" . mysqli_error($con);
+    }
+
+    $sql = "CREATE TABLE Transacciones 
+    (
+    PID INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY(PID),
+    Fecha_transaccion DATE,
+    Monto NUMERIC(10,2),
+    Tipo CHAR(15),
+    ID_CREDITO INT,
+    ID_CUENTA INT,
+    FOREIGN key(ID_CREDITO) references Credito(PID) ON DELETE CASCADE,
+    FOREIGN key(ID_CUENTA) references Cuenta(PID) ON DELETE CASCADE
+    )";
     if (mysqli_query($con, $sql)) {
         echo "Tabla Compras creada correctamente";
     } else {
