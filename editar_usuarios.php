@@ -8,7 +8,7 @@
     <input type='button' value='Regresar a Administrar' onclick="document.location.href='administrar.php';" />
     <form action="<?= $_SERVER["PHP_SELF"]; ?>" method="post">
         <label for="ID">ID del usuario</label><br>
-        <input type="text" name="ID"><br>
+        <input type="number" min="0" name="ID"><br>
 
         <label for="Nombre">Nombre</label><br>
         <input type="text" name="Nombre"><br>
@@ -16,9 +16,11 @@
         <label for="Contrasena">Contraseña</label><br>
         <input type="password" name="Contrasena"><br>
 
-        <label for="Rol">Rol</label><br>
-        <input type="text" name="Rol"><br>
-
+        <label for="Rol">Rol   </label>
+            <select name="Rol" >
+                <option value="Administrador">Administrador</option>
+                <option value="Cliente">Cliente</option>
+            </select><br>
         <input type="submit" value="Editar" name="SubmitButton">
     </form>
     <br>
