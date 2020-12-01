@@ -13,6 +13,7 @@
     <input type='button' value='Editar una cuenta' onclick="document.location.href='editar_cuenta.php';" />
     <input type='button' value='Editar una tarjeta' onclick="document.location.href='editar_tarjeta.php';" />
     <input type='button' value='Editar un credito' onclick="document.location.href='editar_credito.php';" />
+    <input type='button' value='Cobrar tarjetas' onclick="document.location.href='cobrar_tarjetas.php';" />
 
     <br>
     <h2>Creditos a aprobar</h2>
