@@ -26,6 +26,7 @@
 
         <label for="Estado">Estado   </label>
             <select name="Estado" >
+                <option value="" selected></option>
                 <option value="Espera">Espera</option>
                 <option value="Aprobado">Aprobado</option>
             </select>
@@ -97,6 +98,7 @@ function read_tarjetas(){
         $str_datos .= '<th>Cuota de manejo</th>';
         $str_datos .= '<th>Tasa de interes</th>';
         $str_datos .= '<th>Estado</th>';
+        $str_datos .= '<th>Cuenta asociada</th>';
         $str_datos .= '</tr>';
 
         $sql = "SELECT * FROM `tarjeta_credito`"; //WHERE `ID_CUENTA` = $_SESSION['numero de la cuenta jaja']";
@@ -112,7 +114,8 @@ function read_tarjetas(){
                       <td>{$fila['Sobre_cupo']}</td>
                       <td>{$fila['Cuota_manejo']}</td>
                       <td>{$fila['Tasa_interes']}</td>
-                      <td>{$fila['Estado']}</td>";
+                      <td>{$fila['Estado']}</td>
+                      <td>{$fila['ID_CUENTA']}</td>";
             $str_datos .= "</tr>";
         }
         $str_datos .= "</table>";
@@ -174,6 +177,39 @@ function update_cuenta()
         if (mysqli_query($con, $sql)) {
             echo "Se ha ACTUALIZADO la tarjeta de numero {$_POST["ID"]}";
             echo "<br>";
+
+            $sql ="SELECT * FROM `tarjeta_credito` WHERE `PID` ='{$_POST["ID"]}';";
+            //echo $sql;
+            //echo "<br>";
+            $idcuenta=0;
+            $auxresultado = mysqli_query($con, $sql);
+            if (mysqli_query($con, $sql)) {
+                while ($auxfila = mysqli_fetch_array($auxresultado)){
+                    $idcuenta = $auxfila['ID_CUENTA'];
+                }
+            }
+            echo $idcuenta;
+
+            $sql ="SELECT * FROM `cuenta` WHERE `PID` =$idcuenta";
+            $idusuario=0;
+            $auxresultado = mysqli_query($con, $sql);
+            if (mysqli_query($con, $sql)) {
+                while ($auxfila = mysqli_fetch_array($auxresultado)){
+                    $idusuario = $auxfila['ID_USUARIO'];
+                }
+            }
+            //echo $idusuario;
+
+            $fecha = date('Y-m-d');
+
+            $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`)
+             VALUES (NULL, '{$fecha}', 'Un administrador ha modificado los valores de tu tarjeta numero {$_POST['ID']}', '$idusuario');";
+             //echo $sql;
+             if (mysqli_query($con, $sql)) {
+                 //echo "Se pudo insertar en tabla de notificaciones";
+             }else{
+                 //echo "NO se pudo insertar en tabla de notificaciones";
+             }
         } else {
             echo "NO se ha ACTUALIZADO la tarjeta de numero {$_POST["ID"]}, revisa que los datos ingresados sean correctos";
             echo "<br>";

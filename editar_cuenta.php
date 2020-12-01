@@ -151,6 +151,29 @@ function update_cuenta()
         if (mysqli_query($con, $sql)) {
             echo "Se ha ACTUALIZADO la cuenta de numero {$_POST["ID"]}";
             echo "<br>";
+
+            $sql ="SELECT * FROM `cuenta` WHERE `PID` ={$_POST["ID"]}";
+            $idusuario=0;
+            $auxresultado = mysqli_query($con, $sql);
+            if (mysqli_query($con, $sql)) {
+                while ($auxfila = mysqli_fetch_array($auxresultado)){
+                    $idusuario = $auxfila['ID_USUARIO'];
+                }
+            }
+            echo $sql;
+            echo "<br>";
+           // echo $idusuario;
+
+            $fecha = date('Y-m-d');
+            $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`)
+             VALUES (NULL, '{$fecha}', 'Se han modificado los valores de tu cuenta numero {$_POST['ID']}', $idusuario);";
+             //echo $sql;
+             //echo "<br>";
+             if (mysqli_query($con, $sql)) {
+                // echo "Se pudo insertar en tabla de notificaciones";
+             }else{
+                 //echo "NO se pudo insertar en tabla de notificaciones";
+             }
         } else {
             echo "NO se ha ACTUALIZADO la cuenta de numero {$_POST["ID"]}, revisa que los datos ingresados sean correctos";
             echo "<br>";

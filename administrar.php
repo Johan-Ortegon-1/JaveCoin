@@ -105,7 +105,7 @@ function read_tarjetas() //LAMAR DE PRIMERO A LA TABLA PARA EVITAR REFRESCAR.
 }
 
 function read_creditos() //LAMAR DE PRIMERO A LA TABLA PARA EVITAR REFRESCAR. 
-{   echo "h2>Creditos a aprobar</h2>";
+{   echo "<h2>Creditos a aprobar</h2>";
     echo "<p>Seleccione los creditos que desea aprobar y luego de click en el boton de enviar, aquellos que no sean aprobados
     seran rechazados y asignados con el valor estandar. Sera necesario actualizar la pagina par ver los cambios.</p>";
     update_creditos();
@@ -264,7 +264,7 @@ function update_creditos()
                        // echo $str_datos;
                         echo "El credito " . $fila['PID'] . " ha sido aprobado con los valores estandar";
                         //echo "<br>";
-                        $sql = $str_datos;
+                        $sql = $str_datos; 
                     }
                     /*$str_datos = "UPDATE `credito` SET  `Estado`= $aprobado, `Tasa_interes`= $tasa  WHERE `credito`.`PID` = " . $fila['PID'] . "; ";
                     echo $str_datos;

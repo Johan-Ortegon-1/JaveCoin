@@ -24,7 +24,8 @@
         <input type='button'value='Sacar una tarjeta' onclick=\"document.location.href='sacar_tarjeta.php';\"/>
         <input type='button'value='Comprar con tarjeta' onclick=\"document.location.href='comprar_con_tarjeta.php';\"/>
         <input type='button'value='Ver mis productos' onclick=\"document.location.href='ver_mis_productos.php';\"/>
-        <input type='button'value='Transferir' onclick=\"document.location.href='transferir.php';\"/>";
+        <input type='button'value='Transferir' onclick=\"document.location.href='transferir.php';\"/>
+        <input type='button'value='Centro de notificaciones' onclick=\"document.location.href='centro_notificaciones.php';\"/>";
     }
     else if(isset($_SESSION['currentUserID']) and $_SESSION['currentUserRol'] == "Administrador")
     {

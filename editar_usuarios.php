@@ -18,6 +18,7 @@
 
         <label for="Rol">Rol   </label>
             <select name="Rol" >
+                <option value="" selected></option>
                 <option value="Administrador">Administrador</option>
                 <option value="Cliente">Cliente</option>
             </select><br>
@@ -133,6 +134,14 @@ function update_usuario()
         $sql = $str_datos; 
         if (mysqli_query($con, $sql)) {
             echo "Se ha ACTUALIZADO a la persona de ID {$_POST["ID"]}";
+            $fecha = date('Y-m-d');
+            $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`)
+             VALUES (NULL, '{$fecha}', 'Un administrador ha modificado los valores de tu perfil de usuario', '{$_POST['ID']}');";
+             if (mysqli_query($con, $sql)) {
+                 //echo "Se pudo insertar en tabla de notificaciones";
+             }else{
+                 //echo "NO se pudo insertar en tabla de notificaciones";
+             }
             echo "<br>";
         } else {
             echo "NO se ha ACTUALIZADO a la persona de ID {$_POST["ID"]}, revisa que los datos ingresados sean correctos";
