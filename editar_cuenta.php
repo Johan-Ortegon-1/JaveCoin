@@ -1,14 +1,16 @@
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Editar Cuenta</title>
 </head>
+
 <body>
     <h1>Editar Cuenta</h1>
     <input type='button' value='Regresar a Administrar' onclick="document.location.href='administrar.php';" />
     <form action="<?= $_SERVER["PHP_SELF"]; ?>" method="post">
         <label for="ID">ID(Numero de la cuenta)</label><br>
-        <input type="text" name="ID"><br>
+        <input type="number"  min="0" name="ID"><br>
 
         <label for="saldo">Saldo</label><br>
         <input type="number" step="0.01" name="saldo"><br>
@@ -19,10 +21,11 @@
         <label for="ID_USUARIO">ID del usuario</label><br>
         <input type="number" name="ID_USUARIO"><br>
 
-            <input type="submit" value="Editar" name="SubmitButton">
+        <input type="submit" value="Editar" name="SubmitButton">
     </form>
     <br>
 </body>
+
 </html>
 
 <?php
@@ -58,12 +61,12 @@ if (isset($_SESSION['logeado'])) {
     echo "Este funcion es exclusiva para Administradores.";
 }
 read_cuentas();
-function read_cuentas(){
+function read_cuentas()
+{
     include_once dirname(__FILE__) . '/config.php';
-    if(isset($_SESSION['currentUserID']) or isset($_SESSION['currentUserRol']))
-    {
+    if (isset($_SESSION['currentUserID']) or isset($_SESSION['currentUserRol'])) {
         $id = $_SESSION['currentUserID'];
-    }else{
+    } else {
         echo "No se ha podido identificar al usuario registrado.";
     }
     $str_datos = "";
@@ -84,23 +87,22 @@ function read_cuentas(){
     }
     $retorno = " ";
     $contador = 0; //Contador para colocar los OR. 
-    $arreglo []=[];
+    $arreglo[] = [];
     $resultado = mysqli_query($con, $sql);
     if (mysqli_query($con, $sql)) {
         while ($fila = mysqli_fetch_array($resultado)) {
             if ($contador > 0) {
                 $retorno .= " OR ";
             }
-        //$arreglo [$contador] = $fila['PID'];
-         $retorno .= "(`ID_CUENTA` = '{$fila['PID']}')";
-         $contador++;
+            //$arreglo [$contador] = $fila['PID'];
+            $retorno .= "(`ID_CUENTA` = '{$fila['PID']}')";
+            $contador++;
             $str_datos .= '<tr>';
             $str_datos .=
                 "<td>{$fila['PID']}</td>
                       <td>{$fila['Saldo']}</td> 
                       <td>{$fila['Cuota_manejo']}</td>";
             $str_datos .= "</tr>";
-           
         }
         $str_datos .= "</table>";
         echo "<h3>Estas son todas las cuentas de ahorro existentes en nuestro banco. Recuerda que puedes editar uno o varios campos </h3>";
@@ -110,7 +112,7 @@ function read_cuentas(){
         echo "Error en la seleccion " . mysqli_error($con);
     }
     //$retorno =  "(`ID_CUENTA` = 1) OR (`ID_CUENTA` = 3)";
-   // return $retorno ;
+    // return $retorno ;
 }
 
 function update_cuenta()
@@ -143,9 +145,9 @@ function update_cuenta()
     }
     if ($contador > 0) { //Asegurarse de que modifique al menos un campo
         $str_datos .= " WHERE `cuenta`.`PID` = {$_POST["ID"]};"; //CAMBIAR AQUI A ID DEL USUARIO.
-       // echo $str_datos; //UPDATE `cuenta` SET `Saldo` = '10196.01', `Cuota_manejo` = '11.02', `ID_USUARIO` = '2' WHERE `cuenta`.`PID` = 1;
+        // echo $str_datos; //UPDATE `cuenta` SET `Saldo` = '10196.01', `Cuota_manejo` = '11.02', `ID_USUARIO` = '2' WHERE `cuenta`.`PID` = 1;
         echo "<br>";
-        $sql = $str_datos; 
+        $sql = $str_datos;
         if (mysqli_query($con, $sql)) {
             echo "Se ha ACTUALIZADO la cuenta de numero {$_POST["ID"]}";
             echo "<br>";
@@ -153,7 +155,7 @@ function update_cuenta()
             echo "NO se ha ACTUALIZADO la cuenta de numero {$_POST["ID"]}, revisa que los datos ingresados sean correctos";
             echo "<br>";
         }
-    }else{
+    } else {
         echo "Debes modificar al menos un campo.";
     }
 }

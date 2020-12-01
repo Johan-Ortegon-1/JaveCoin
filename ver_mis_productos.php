@@ -58,6 +58,8 @@ function read_creditos(){
         $str_datos .= '<th>Saldo</th>'; 
         $str_datos .= '<th>Estado</th>';
         $str_datos .= '<th>Fecha de pago</th>';
+        $str_datos .= '<th>Meses</th>';
+        $str_datos .= '<th>Correo Notificaciones</th>';
         $str_datos .= '</tr>';
 
         $sql = "SELECT * FROM `credito` WHERE `ID_USUARIO` = $id"; //WHERE `ID_USUARIO` = $_SESSION['user']";
@@ -72,7 +74,9 @@ function read_creditos(){
                       <td>{$fila['Tasa_interes']}</td> 
                       <td>{$fila['Saldo']}</td>
                       <td>{$fila['Estado']}</td>
-                      <td>{$fila['Fecha_pago']}</td>";
+                      <td>{$fila['Fecha_pago']}</td>
+                      <td>{$fila['Meses']}</td>
+                      <td>{$fila['Correo_notificaciones']}</td>";
             $str_datos .= "</tr>";
         }
         $str_datos .= "</table>";

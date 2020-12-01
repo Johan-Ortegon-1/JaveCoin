@@ -10,7 +10,7 @@
     <input type='button' value='Regresar a Administrar' onclick="document.location.href='administrar.php';" />
     <form action="<?= $_SERVER["PHP_SELF"]; ?>" method="post">
         <label for="ID">ID(Numero de la Tarjeta)</label><br>
-        <input type="number" name="ID"><br>
+        <input type="number" min="0" name="ID"><br>
 
         <label for="Cupo">Cupo</label><br>
         <input type="number" min="10" step="0.01" name="Cupo"><br>
@@ -24,8 +24,12 @@
         <label for="Tasa_interes">Tasa de interes</label><br>
         <input type="number" min="0.01" step="0.01" name="Tasa_interes"><br>
 
-        <label for="Estado">Estado</label><br>
-        <input type="text" name="Estado"><br>
+        <label for="Estado">Estado   </label>
+            <select name="Estado" >
+                <option value="Espera">Espera</option>
+                <option value="Aprobado">Aprobado</option>
+            </select>
+        <br>
 
         <label for="ID_CUENTA">ID de la Cuenta asociada</label><br>
         <input type="number" min="0" name="ID_CUENTA"><br>
