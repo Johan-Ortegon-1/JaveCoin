@@ -10,7 +10,7 @@
     <input type='button' value='Regresar a Administrar' onclick="document.location.href='administrar.php';" />
     <form action="<?= $_SERVER["PHP_SELF"]; ?>" method="post">
         <label for="ID">ID(Numero de la Tarjeta)</label><br>
-        <input type="number" name="ID"><br>
+        <input type="number" min="0" name="ID"><br>
 
         <label for="Cupo">Cupo</label><br>
         <input type="number" min="10" step="0.01" name="Cupo"><br>

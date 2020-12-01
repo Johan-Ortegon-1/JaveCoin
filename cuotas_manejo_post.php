@@ -76,11 +76,11 @@ function cuotas_tarjetas(){
     if (mysqli_query($con, $sql)) {
         while ($fila = mysqli_fetch_array($resultado)) {
             $str_datos="";
-            $nuevo = $fila['Cupo']-$fila ['Cuota_manejo'];
+            $nuevo = $fila ['Cuota_manejo'];
             if($nuevo<0){
                 $nuevo = 0;
             }
-            $str_datos .= " UPDATE `tarjeta_credito` SET `Cupo` = '$nuevo' WHERE `tarjeta_credito`.`PID` = ".$fila['PID']."; ";
+            $str_datos .= " UPDATE `cuenta` SET `Saldo` = `Saldo`- $nuevo WHERE `cuenta`.`PID` = ".$fila['PID']."; ";
             echo $str_datos;
             echo "<br>";
             if (mysqli_query($con, $str_datos)) {

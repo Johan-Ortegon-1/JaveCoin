@@ -10,7 +10,7 @@
     <input type='button' value='Regresar a Administrar' onclick="document.location.href='administrar.php';" />
     <form action="<?= $_SERVER["PHP_SELF"]; ?>" method="post">
         <label for="ID">ID(Numero de la cuenta)</label><br>
-        <input type="text" name="ID"><br>
+        <input type="number"  min="0" name="ID"><br>
 
         <label for="saldo">Saldo</label><br>
         <input type="number" step="0.01" name="saldo"><br>
