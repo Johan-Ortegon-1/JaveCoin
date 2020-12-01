@@ -24,8 +24,12 @@
         <label for="Tasa_interes">Tasa de interes</label><br>
         <input type="number" min="0.01" step="0.01" name="Tasa_interes"><br>
 
-        <label for="Estado">Estado</label><br>
-        <input type="text" name="Estado"><br>
+        <label for="Estado">Estado   </label>
+            <select name="Estado" >
+                <option value="Espera">Espera</option>
+                <option value="Aprobado">Aprobado</option>
+            </select>
+        <br>
 
         <label for="ID_CUENTA">ID de la Cuenta asociada</label><br>
         <input type="number" min="0" name="ID_CUENTA"><br>
