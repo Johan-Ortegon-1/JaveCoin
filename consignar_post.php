@@ -1,6 +1,11 @@
 <?php
     session_start();
-    $idUsuario = $_SESSION['currentUserID']
+    $idUsuario = "";
+    if(isset($_SESSION[currentUserID])) {
+        $idUsuario = $_SESSION['currentUserID'];
+    }else{
+        $idUsuario = "";
+    }
 ?>
 <!DOCTYPE html>
 <html>
@@ -55,6 +60,34 @@
                 $resultado = mysqli_query($con,$sql );
                 if(mysqli_affected_rows($con) !== 0){
                     $errRetiro = "Transaccion exitosa";
+
+                    $date = date('Y-m-d H:i:s');
+
+                    if($idUsuario != ""){
+                        $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`) 
+                        VALUES (NULL, '$date', 'Has consignado $cantidad a la cuenta $IDP.', $idUsuario)";
+
+                        mysqli_query($con,$sql);
+                    }
+
+                    //busco la cuenta a la cual consigné
+                    $sql = "SELECT * FROM `cuenta` WHERE `PID` = $IDP";
+                    $cuentaEnvio = mysqli_query($con,$sql);
+                    $row = mysqli_fetch_row($cuentaEnvio);
+
+                    //busco el usuario asociado a esa cuenta
+                    $sql = "SELECT * FROM `usuario` WHERE `PID` = $row[3]";
+                    $usuarioEnvio = mysqli_query($con,$sql);
+                    $row = mysqli_fetch_row($usuarioEnvio);
+
+                    if(implode(null,$row) == null){
+                        //el usuario probablemente sea un visitante
+                    }else{
+                        $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`) 
+                        VALUES (NULL, '$date', 'Se te han consignado $cantidad a tu cuenta $IDP', $row[0])";
+
+                        mysqli_query($con,$sql);
+                    }
                 }else{
                     $errRetiro = "Cuenta inexistente";
                 }
@@ -75,6 +108,34 @@
                     $resultado = mysqli_query($con,$sql);
                     $resta = $row[2] - $cantidad;
                     $errRetiro = "Transaccion exitosa. Credito restante:$resta";
+
+                    $date = date('Y-m-d H:i:s');
+
+                    if($idUsuario != "") {
+                        $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`) 
+                        VALUES (NULL, '$date', 'Has consignado $cantidad al credito $IDP.', $idUsuario)";
+                        mysqli_query($con,$sql);
+                    }
+
+                    //busco la cuenta a la cual consigné
+                    $sql = "SELECT * FROM `credito` WHERE `PID` = $IDP";
+                    $creditoEnvio = mysqli_query($con,$sql);
+                    $row = mysqli_fetch_row($creditoEnvio);
+
+                    //busco el usuario asociado a esa cuenta
+                    $sql = "SELECT * FROM `usuario` WHERE `PID` = $row[7]";
+                    $usuarioEnvio = mysqli_query($con,$sql);
+                    $row = mysqli_fetch_row($usuarioEnvio);
+
+                    if(implode(null,$row) == null){
+                        //el usuario probablemente sea un visitante
+                    }else{
+                        $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`) 
+                        VALUES (NULL, '$date', 'Se te han consignado $cantidad a al credito #$IDP', $row[0])";
+
+                        mysqli_query($con,$sql);
+                    }
+
                 }
             }
         }

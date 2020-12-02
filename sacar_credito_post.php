@@ -66,7 +66,13 @@ session_start();
                 $diaPag = $_POST['diaPago'];
                 $sql = "INSERT INTO Credito (Tasa_interes, Saldo, Estado, Fecha_pago, Meses, ID_USUARIO) VALUES ($tasa, $saldo, \"$estado_inicial\", $diaPag, $meses_general, $IDUsuario)";
                 if(mysqli_query($con,$sql)){
-                    $mssSacarCredito = "Se ha creado el crediro, esperando respuesta del Administrador ";
+                    $mssSacarCredito = "Se ha creado el credito, esperando respuesta del Administrador ";
+                    $date = date('Y-m-d H:i:s');
+
+                    $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`) 
+                    VALUES (NULL, '$date', 'Ha creado un credito, esperando respuesta del Administrador', $_SESSION[currentUserID])";
+
+                    mysqli_query($con,$sql);
                 }
                 else{
                     $mssSacarCredito .= "Problemas en la conexión ".mysqli_error($con);

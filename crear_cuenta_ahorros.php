@@ -25,6 +25,14 @@
                 $sql = "INSERT INTO Cuenta (Saldo, Cuota_manejo, ID_USUARIO) VALUES (0.0, $cuata_general, $IDUsuario)";
                 if(mysqli_query($con,$sql)){
                     $mssCrearCuenta = "Se ha creado la Cuenta de ahorros a nombre de: ".$_SESSION['currentUserNombre'];
+
+                    $date = date('Y-m-d H:i:s');
+
+                    $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`) 
+                    VALUES (NULL, '$date', 'Se ha creado tu nueva cuenta de ahorros', $IDUsuario)";
+
+                    mysqli_query($con,$sql);
+
                 }
                 else{
                     $mssCrearCuenta = "Problemas en la conexión ".mysqli_error($con);

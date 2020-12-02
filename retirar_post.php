@@ -1,3 +1,7 @@
+<?php
+    session_start();
+    $idUsuario = $_SESSION['currentUserID']
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,6 +43,14 @@
 			$resultado = mysqli_query($con,$sql );
 		   	if(mysqli_affected_rows($con) !== 0){
 		   		$errRetiro = "Transaccion exitosa";
+
+                $date = date('Y-m-d H:i:s');
+
+                $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`) 
+                    VALUES (NULL, '$date', 'Se han retirado $cantidad javecoins de su cuenta $cuenta', $idUsuario)";
+
+                mysqli_query($con,$sql);
+
 		   	}else{
 		   		$errRetiro = "Saldo insuficiente";
 		   	}	

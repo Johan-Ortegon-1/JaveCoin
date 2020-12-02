@@ -1,6 +1,5 @@
 <?php
     session_start();
-    $idUsuario = $_SESSION['currentUserID']
 ?>
 <html>
     <head>

@@ -73,6 +73,7 @@
     (
     PID INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY(PID),
+    Nombre_producto VARCHAR(100),
     Fecha_compra DATE,
     totalPagar NUMERIC(10,2),
     cuotas INT,

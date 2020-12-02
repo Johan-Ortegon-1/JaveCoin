@@ -31,6 +31,12 @@ session_start();
             $sql = "INSERT INTO Tarjeta_Credito (Cupo, Sobre_cupo, Cuota_manejo, Tasa_interes, Estado, ID_CUENTA) VALUES ($cupo_inicial, $sobre_cupo_inicial, $cuata_general, $tasa_inicial, \"$estado_inicial\", $IDCuenta)";
             if(mysqli_query($con,$sql)){
                 $mssSacarTarjeta = "Se ha creado la tarjeta de credito :) a nombre de: ".$_SESSION['currentUserNombre'];
+                $date = date('Y-m-d H:i:s');
+
+                $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`) 
+                    VALUES (NULL, '$date', 'Ha solicitado una nueva tarjeta de credito. Espere la respuesta del administrador.', $_SESSION[currentUserID])";
+
+                mysqli_query($con,$sql);
             }
             else{
                 $mssSacarTarjeta = "Problemas en la conexión ".mysqli_error($con);

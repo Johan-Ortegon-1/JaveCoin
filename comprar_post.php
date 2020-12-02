@@ -1,3 +1,8 @@
+<?php
+    session_start();
+    $idUsuario = $_SESSION['currentUserID']
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,12 +38,19 @@
             $date = date('Y-m-d H:i:s');
 
                 $sql = "INSERT 
-                INTO `compras` (`PID`, `Fecha_compra`, `totalPagar`, `cuotas`, `cuotas_pagadas`, `ID_TARJETA`) 
-                VALUES (NULL, '$date', $precio, $numCuotas, '0', $numTarjeta);";
+                INTO `compras` (`PID`,`Nombre_producto`, `Fecha_compra`, `totalPagar`, `cuotas`, `cuotas_pagadas`, `ID_TARJETA`) 
+                VALUES (NULL, '$nombreProducto', '$date', $precio, $numCuotas, '0', $numTarjeta);";
 
                 $resultado = mysqli_query($con,$sql );
                 if(mysqli_affected_rows($con) !== 0){
                     $errRetiro = "Transaccion existosa";
+
+                    $date = date('Y-m-d H:i:s');
+
+                    $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`) 
+                    VALUES (NULL, '$date', 'Has comprado $nombreProducto por $precio $tipoMoneda con la tarjeta # $numTarjeta',$idUsuario)";
+
+                    mysqli_query($con,$sql);
                 }else{
                     $errRetiro = "Cuenta inexistente";
                 }

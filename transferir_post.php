@@ -1,3 +1,7 @@
+<?php
+    session_start();
+    $idUsuario = $_SESSION['currentUserID']
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -51,6 +55,33 @@
                 if(mysqli_affected_rows($con) !== 0){
                     mysqli_query($con,$transferir2 );
                     $errRetiro = "Transaccion exitosa";
+
+                    $date = date('Y-m-d H:i:s');
+
+
+                    $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`) 
+                    VALUES (NULL, '$date', 'Has trasnferido $cantidad a la cuenta #$cuentaDestino.',$idUsuario)";
+
+                    mysqli_query($con,$sql);
+
+                    //busco la cuenta a la cual consigné
+                    $sql = "SELECT * FROM `cuenta` WHERE `PID` = $cuentaDestino";
+                    $cuentaEnvio = mysqli_query($con,$sql);
+                    $row = mysqli_fetch_row($cuentaEnvio);
+
+                    //busco el usuario asociado a esa cuenta
+                    $sql = "SELECT * FROM `usuario` WHERE `PID` = $row[3]";
+                    $usuarioEnvio = mysqli_query($con,$sql);
+                    $row = mysqli_fetch_row($usuarioEnvio);
+
+                    if(implode(null,$row) == null){
+                        //el usuario probablemente sea un visitante
+                    }else{
+                        $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`) 
+                        VALUES (NULL, '$date', 'Se te han consignado $cantidad a tu cuenta #$cuentaDestino', $row[0])";
+
+                        mysqli_query($con,$sql);
+                    }
                 }else{
                     $errRetiro = "Saldo insuficiente";
                 }
