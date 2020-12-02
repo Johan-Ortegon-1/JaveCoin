@@ -131,7 +131,7 @@
                         //el usuario probablemente sea un visitante
                     }else{
                         $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`) 
-                        VALUES (NULL, '$date', 'Se te han consignado $cantidad a al credito #$IDP', $row[0])";
+                        VALUES (NULL, '$date', 'Se te han consignado $cantidad al credito #$IDP', $row[0])";
 
                         mysqli_query($con,$sql);
                     }
