@@ -25,7 +25,7 @@
             <input type="text" name="IDP"><br>
 
             <label for="cantidad">Cantidad</label><br>
-            <input type="number" min="0" step=1 name="cantidad" id="cantidad">
+            <input type="number" min="0" step=0.01 name="cantidad" id="cantidad">
 
             <select name ="tipoMoneda" id="tipoMoneda">
                 <option

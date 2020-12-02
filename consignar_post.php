@@ -43,11 +43,11 @@
             $errRetiro = "Transaccion declinada: Es necesario la cedula";
         }
 
-        else if (!preg_match("/^[0-9]*$/",$cantidad))
+        else if (!preg_match("/^[0-9]*(.[0-9]*)?$/",$cantidad))
         {
             $errRetiro = "Transaccion declinada: Ingrese una cantidad valida";
         }
-        else if (!preg_match("/^[0-9]*$/",$IDP))
+        else if (!preg_match("/^[0-9]*(.[0-9]*)?$/",$IDP))
         {
             $errRetiro = "Transaccion declinada: Ingrese una cuenta valida";
         }
