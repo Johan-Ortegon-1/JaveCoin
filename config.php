@@ -17,9 +17,11 @@ define('SOBRE_CUPO_INICIAL', 1500);
 
 //Manejo Creditos
 define('MESES_GENERAL', 4);
+define('INTERES_MORA_VISITANTES', 0.05);
 
 //Manejo de transacciones
 define('RETIRAR', 'retirar');
 define('CONSIGNAR', 'consignar');
+define('MORA', 'mora');
 ?>
 

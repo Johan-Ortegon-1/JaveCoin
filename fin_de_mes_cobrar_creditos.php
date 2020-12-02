@@ -25,29 +25,123 @@
             $GLOBALS['intereses'] = $row["Tasa_interes"];
             $correoAsociado = $row["Correo_notificaciones"];
             $mesesActual = $row["Meses"];
-            $tasa_interes = $row["Tasa_interes"];
+            $fechaPago = $row["Fecha_pago"];
+            $estadoActual = $row["Estado"];
             
-            $cobroMesActual = ($GLOBALS['saldoCredito']/$mesesActual)+($GLOBALS['saldoCredito']*$tasa_interes);
-            $GLOBALS['cobroMensual'] = ($GLOBALS['saldoCredito']/$mesesActual)+($GLOBALS['saldoCredito']*$tasa_interes);
-            if ($idUsuario == NULL)
+            $cobroMesActual = ($GLOBALS['saldoCredito']/$mesesActual)+($GLOBALS['saldoCredito']*$GLOBALS['intereses']);
+            $GLOBALS['cobroMensual'] = ($GLOBALS['saldoCredito']/$mesesActual)+($GLOBALS['saldoCredito']*$GLOBALS['intereses']);
+            if($estadoActual == "Aprobado")
             {
-                cobrarVisitante($correoAsociado, $cobroMesActual, $con);
+                if ($idUsuario == NULL)
+                {
+                    cobrarVisitante($idCredito, $mesesActual, $fechaPago, $correoAsociado, $cobroMesActual, $con);
+                }
+                else
+                {
+                    cobrarCliente($idCredito, $idUsuario, $cobroMesActual, $mesesActual, $con);
+                }
             }
             else
             {
-                cobrarCliente($idCredito, $idUsuario, $cobroMesActual, $mesesActual, $con);
+                $GLOBALS['mssCobrarCreditos'] .= "El credito: ".$idCredito." aún no ha sido aprovado <br>";
             }
         }
-        echo "<br>********RESUMEN: ".$GLOBALS['mssCobrarCreditos'];
+        echo "<br>********RESUMEN: <br>".$GLOBALS['mssCobrarCreditos'];
     }
     else{
-        $GLOBALS['mssCobrarCreditos'].= "Error al consultar cuentas: ".mysqli_error($con);
+        $GLOBALS['mssCobrarCreditos'].= "Error al consultar cuentas: ".mysqli_error($con)."<br>";
         $GLOBALS['flagError'] = true;
     }
 
-    function cobrarVisitante($correoAsociadoP, $cobroMesActualP, $con)
+    function cobrarVisitante($idCreditoP, $mesesActualP, $fechaPagoP, $correoAsociadoP, $cobroMesActualP, $con)
     {
-        echo "<br> Credito de visitante, saldo actual: ". $cobroMesActualP." Correo asociado: ". $correoAsociadoP;  
+        $idCredito = "";
+        $tipo = "";
+        $mesActual = 0;
+        $monto = 0.0;
+        $diaUltimoPago = 0;
+        $currentYear = 0;
+        echo "*********************************************";
+        echo "<br> <h3>Credito de visitante</h3> <br> Pago para este mes: ". $cobroMesActualP." Correo asociado: ". $correoAsociadoP."<br>";
+        $sql = "SELECT * from Transacciones ORDER BY Fecha_transaccion ASC";
+        if ($result = $con->query($sql)) {
+            while ($row = $result->fetch_assoc()) 
+            {
+                $idCredito = $row['ID_CREDITO'];
+                $tipo = $row['Tipo'];
+                $fecha = $row['Fecha_transaccion'];
+                $mesTransaccion = date("n", strtotime($fecha));
+                $mesActual = date("n", strtotime($fecha));
+                $currentYear = date("Y", strtotime($fecha));
+                if($idCreditoP == $idCredito and $tipo == CONSIGNAR and $mesActual == $mesTransaccion)
+                {
+                    echo "<br>Fecha transaccion: ".$fecha." por un total de: ".$row['Monto'];
+                    $monto = $monto + $row['Monto'];
+                    if($monto >= $cobroMesActualP)
+                    {
+                        $diaUltimoPago = date('j', strtotime($fecha));
+                        break;
+                    }
+                }
+            }
+            if($monto >= $cobroMesActualP and $diaUltimoPago <= $fechaPagoP)
+            {
+                echo "<br> El visitante ha pagado su credito este mes a tiempo <br>";
+            }
+            else if($monto >= $cobroMesActualP and $diaUltimoPago > $fechaPagoP)
+            {
+                $diasMora = $diaUltimoPago - $fechaPagoP;
+                echo "<br> El visitante ha pagado su credito este mes con algunos días de retraso";
+                echo "<br> Se le aplica una sancion en su credito de: ";
+                aplicarMora($idCreditoP, $diasMora, $mesesActualP, $con);
+            }
+            else
+            {
+                $fechaActual = date("Y/m/d");
+                $mesActual = date("n", strtotime($fechaActual));
+                $currentYear = date("Y", strtotime($fechaActual));
+                echo "<br>Estado: El visitante no ha pagado su credito este mes";
+                $diasMora =  cal_days_in_month(CAL_GREGORIAN,$mesActual,$currentYear);
+                echo "<br>Efecto: Efectuando sación por ".$diasMora." días, ". "un total de:";
+                aplicarMora($idCreditoP, $diasMora, $mesesActualP, $con);
+                echo "<br> Enviando correo de notificación<br>";
+                $contenido = "Su credito con ID: ".$idCreditoP." debia ser cancelado este mes por un valor de: ".$cobroMesActualP."No se ha recibido este pago.";
+                //enviar_correo($correoAsociadoP, "Notificacion de falta de pago", $contenido);
+            }
+        }
+    }
+
+    function aplicarMora($idCreditoP, $diasMoraP, $mesesActual, $con)
+    {
+        $saldoNuevo = 0;
+        $saldoNuevo = $GLOBALS['saldoCredito'] + $GLOBALS['saldoCredito']*INTERES_MORA_VISITANTES*$diasMoraP;
+        $sql = "UPDATE Credito SET Saldo = $saldoNuevo WHERE PID = $idCreditoP";
+        if(mysqli_query($con, $sql))
+        {
+            $incremento = $GLOBALS['saldoCredito']*INTERES_MORA_VISITANTES*$diasMoraP;
+            echo $incremento." $<br>";
+            $GLOBALS['mssCobrarCreditos'] .= "El credito: $idCreditoP Se incremento en:".$incremento."<br>";
+            registrarMora($idCreditoP, $incremento, $con);
+        }
+        else{
+            $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con)."<br>";
+            $GLOBALS['flagError'] = true;
+        }
+    }
+
+    function registrarMora($idCredito, $consignacion, $con)
+    {
+        $fecha_actual = date("Y-m-d");
+        $tipo = MORA;
+        $sql = "INSERT INTO Transacciones (Fecha_transaccion, Monto, Tipo, ID_CREDITO) VALUES (\"$fecha_actual\", $consignacion, \"$tipo\", $idCredito)";
+        if(mysqli_query($con, $sql))
+        {
+            $GLOBALS['mssCobrarCreditos'] .= "La transaccion por mora se registro"."<br>";
+        }
+        else{
+            $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con)."<br>";
+            $GLOBALS['flagError'] = true;
+        }
     }
 
     function cobrarCliente($idCreditoP, $idUsuarioP, $cobroMesActualP, $mesesActual, $con)
@@ -61,7 +155,8 @@
         {
             $monto = $result->fetch_assoc();
             $dineroTotalCliente = $monto['monto'];
-            echo "<br> La cantidad de dinero del cliente: ".$idUsuarioP." Es: ".$monto['monto']." Para pagar: ".$cobroMesActualP;
+            echo "*********************************************";
+            echo "<br> <h3>Credito de Cliente</h3> <br> Pago para este mes: ". $cobroMesActualP." ID del cliente asociado: ". $idUsuarioP."<br>";
             if($cobroMesActualP <= $dineroTotalCliente)
             {
                 $sql = "SELECT * from Cuenta WHERE ID_USUARIO = $idUsuarioP ORDER BY Saldo DESC";
@@ -91,7 +186,7 @@
                 }
                 else
                 {
-                    echo "Error ORDER BYProblemas en la conexión ".mysqli_error($con);
+                    $GLOBALS['mssCobrarCreditos'].="<br>Error ORDER BYProblemas en la conexión ".mysqli_error($con)."<br>";
                 }
             }
             else{
@@ -106,21 +201,21 @@
             }
         }
         else{
-            $GLOBALS['mssCobrarCreditos'] .= "Error al consultar cuentas: ".mysqli_error($con);
+            $GLOBALS['mssCobrarCreditos'] .= "Error al consultar cuentas: ".mysqli_error($con)."<br>";
             $GLOBALS['flagError'] = true;
         }
-
     }
 
     function descontarDeCuenta($idCuenta, $montoActualizar, $mesesActual, $con){
         $sql = "UPDATE Cuenta SET Saldo = $montoActualizar WHERE PID = $idCuenta";
         if(mysqli_query($con, $sql))
         {
-            $GLOBALS['mssCobrarCreditos'] .= "La cuenta: $idCuenta quedo con un total de: $montoActualizar";
+            echo "Se le desconto a la cuenta con ID: ".$idCuenta."<br>";
+            $GLOBALS['mssCobrarCreditos'] .= "La cuenta: $idCuenta quedo con un total de: $montoActualizar"."<br>";
             registrarRetiro($idCuenta, $con);
         }
         else{
-            $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con);
+            $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con)."<br>";
             $GLOBALS['flagError'] = true;
         }
     }
@@ -134,11 +229,11 @@
             $sql = "DELETE FROM Credito WHERE PID = $idCredito";
             if(mysqli_query($con, $sql))
             {
-                $GLOBALS['mssCobrarCreditos'] .= "El credito: $idCredito quedo con un total de: $saldoNuevo";
-                registrarConsignacion($idCredito, $mesesActual + 1, $con);
+                echo "El credito con ID: ".$idCredito." Fue saldado <br>";
+                $GLOBALS['mssCobrarCreditos'] .= "El credito: $idCredito quedo con un total de: $saldoNuevo y sera eliminado de la BD"."<br>";
             }
             else{
-                $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con);
+                $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con)."<br>";
                 $GLOBALS['flagError'] = true;
             }
         }
@@ -147,11 +242,11 @@
             $sql = "UPDATE Credito SET Saldo = $saldoNuevo, Meses = $mesesActual WHERE PID = $idCredito";
             if(mysqli_query($con, $sql))
             {
-                $GLOBALS['mssCobrarCreditos'] .= "El credito: $idCredito quedo con un total de: $saldoNuevo";
+                $GLOBALS['mssCobrarCreditos'] .= "El credito: $idCredito quedo con un total de: $saldoNuevo"."<br>";
                 registrarConsignacion($idCredito, $mesesActual + 1, $con);
             }
             else{
-                $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con);
+                $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con)."<br>";
                 $GLOBALS['flagError'] = true;
             }
         }
@@ -164,10 +259,10 @@
         $sql = "INSERT INTO Transacciones (Fecha_transaccion, Monto, Tipo, ID_CREDITO) VALUES (\"$fecha_actual\", $consignacion, \"$tipo\", $idCredito)";
         if(mysqli_query($con, $sql))
         {
-            $GLOBALS['mssCobrarCreditos'] .= "La transaccion se registro";
+            $GLOBALS['mssCobrarCreditos'] .= "La transaccion se registro"."<br>";
         }
         else{
-            $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con);
+            $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con)."<br>";
             $GLOBALS['flagError'] = true;
         }
     }
@@ -180,10 +275,10 @@
         $sql = "INSERT INTO Transacciones (Fecha_transaccion, Monto, Tipo, ID_CUENTA) VALUES (\"$fecha_actual\", $retiro, \"$tipo\", $idCuenta)";
         if(mysqli_query($con, $sql))
         {
-            $GLOBALS['mssCobrarCreditos'] .= "La transaccion se registro";
+            $GLOBALS['mssCobrarCreditos'] .= "La transaccion se registro"."<br>";
         }
         else{
-            $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con);
+            $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con)."<br>";
             $GLOBALS['flagError'] = true;
         }
     }
@@ -226,5 +321,5 @@
             echo "Se ha enviado correctamente";
         }
     }
-
+    echo "<input type='button'value='Terminar' onclick=\"document.location.href='index.php';\"/>";
 ?>

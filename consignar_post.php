@@ -1,6 +1,9 @@
 <?php
     session_start();
-    $idUsuario = $_SESSION['currentUserID']
+    if(isset($_SESSION['currentUserID']))
+    {
+        $idUsuario = $_SESSION['currentUserID'];
+    }
 ?>
 <!DOCTYPE html>
 <html>
@@ -58,15 +61,18 @@
                 }else{
                     $errRetiro = "Cuenta inexistente";
                 }
-            }else{
-
+            }
+            else
+            {
                 $sql = "SELECT * FROM `credito` WHERE `PID` = $IDP";
                 $existeCuenta = mysqli_query($con,$sql);
                 $row = mysqli_fetch_row($existeCuenta);
                 if(implode(null,$row) == null){ $errRetiro = "El credito a transferir no existe";}
                 else if( ( $row[2] - $cantidad ) < 0 ) {
                     $errRetiro = "Maxima cantidad a consignar: $row[2] JaveCoins";
-                }else{
+                }
+                else
+                {
                     $sql = "UPDATE `credito` 
                      SET Saldo = CASE
                         WHEN (Saldo-$cantidad)>=0 THEN Saldo-$cantidad
@@ -74,12 +80,25 @@
                      END  WHERE `PID` = $IDP;";
                     $resultado = mysqli_query($con,$sql);
                     $resta = $row[2] - $cantidad;
-                    $errRetiro = "Transaccion exitosa. Credito restante:$resta";
+                    $errRetiro = "Transaccion exitosa. Credito restante:$resta ";
+                    $errRetiro .= registrarConsignacion($IDP, $cantidad, $con);
                 }
             }
         }
+    }
 
-
+    function registrarConsignacion($idCredito, $consignacion, $con)
+    {
+        $fecha_actual = date("Y-m-d");
+        $tipo = CONSIGNAR;
+        $sql = "INSERT INTO Transacciones (Fecha_transaccion, Monto, Tipo, ID_CREDITO) VALUES (\"$fecha_actual\", $consignacion, \"$tipo\", $idCredito)";
+        if(mysqli_query($con, $sql))
+        {
+            return "  Transaccion registrada en la BD";
+        }
+        else{
+            return "  Error al almacenar la transaccion en la BD";
+        }
     }
     ?>
 
