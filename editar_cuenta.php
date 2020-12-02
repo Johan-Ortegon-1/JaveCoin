@@ -160,7 +160,6 @@ function update_cuenta()
                     $idusuario = $auxfila['ID_USUARIO'];
                 }
             }
-            echo $sql;
             echo "<br>";
            // echo $idusuario;
 

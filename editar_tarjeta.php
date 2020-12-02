@@ -188,7 +188,6 @@ function update_cuenta()
                     $idcuenta = $auxfila['ID_CUENTA'];
                 }
             }
-            echo $idcuenta;
 
             $sql ="SELECT * FROM `cuenta` WHERE `PID` =$idcuenta";
             $idusuario=0;

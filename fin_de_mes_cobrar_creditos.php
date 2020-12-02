@@ -28,9 +28,12 @@
             $fechaPago = $row["Fecha_pago"];
             $estadoActual = $row["Estado"];
             
-            $cobroMesActual = ($GLOBALS['saldoCredito']/$mesesActual)+($GLOBALS['saldoCredito']*$GLOBALS['intereses']);
-            $GLOBALS['cobroMensual'] = ($GLOBALS['saldoCredito']/$mesesActual)+($GLOBALS['saldoCredito']*$GLOBALS['intereses']);
-            if($estadoActual == "Aprobado")
+            if($mesesActual > 0)
+            {
+                $cobroMesActual = ($GLOBALS['saldoCredito']/$mesesActual)+($GLOBALS['saldoCredito']*$GLOBALS['intereses']);                    
+                $GLOBALS['cobroMensual'] = ($GLOBALS['saldoCredito']/$mesesActual)+($GLOBALS['saldoCredito']*$GLOBALS['intereses']);
+            }
+            if($estadoActual == "Aprobado" and $GLOBALS['saldoCredito'] > 0)
             {
                 if ($idUsuario == NULL)
                 {
@@ -41,7 +44,7 @@
                     cobrarCliente($idCredito, $idUsuario, $cobroMesActual, $mesesActual, $con);
                 }
             }
-            else
+            else if($GLOBALS['saldoCredito'] > 0)
             {
                 $GLOBALS['mssCobrarCreditos'] .= "El credito: ".$idCredito." aún no ha sido aprovado <br>";
             }
@@ -106,7 +109,7 @@
                 aplicarMora($idCreditoP, $diasMora, $mesesActualP, $con);
                 echo "<br> Enviando correo de notificación<br>";
                 $contenido = "Su credito con ID: ".$idCreditoP." debia ser cancelado este mes por un valor de: ".$cobroMesActualP."No se ha recibido este pago.";
-                //enviar_correo($correoAsociadoP, "Notificacion de falta de pago", $contenido);
+                enviar_correo($correoAsociadoP, "Notificacion de falta de pago", $contenido);
             }
         }
     }
@@ -225,31 +228,21 @@
         $mesesActual = $mesesActual - 1; 
         $sql = "";
         
-        if($mesesActual == 0 and $saldoNuevo <= 0){
-            $sql = "DELETE FROM Credito WHERE PID = $idCredito";
-            if(mysqli_query($con, $sql))
-            {
-                echo "El credito con ID: ".$idCredito." Fue saldado <br>";
-                $GLOBALS['mssCobrarCreditos'] .= "El credito: $idCredito quedo con un total de: $saldoNuevo y sera eliminado de la BD"."<br>";
-            }
-            else{
-                $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con)."<br>";
-                $GLOBALS['flagError'] = true;
-            }
+        if($saldoNuevo <= 0){
+            echo "El credito con ID: ".$idCredito." Fue saldado <br>";
         }
-        else
+        $sql = "UPDATE Credito SET Saldo = $saldoNuevo, Meses = $mesesActual WHERE PID = $idCredito";
+        if(mysqli_query($con, $sql))
         {
-            $sql = "UPDATE Credito SET Saldo = $saldoNuevo, Meses = $mesesActual WHERE PID = $idCredito";
-            if(mysqli_query($con, $sql))
-            {
-                $GLOBALS['mssCobrarCreditos'] .= "El credito: $idCredito quedo con un total de: $saldoNuevo"."<br>";
-                registrarConsignacion($idCredito, $mesesActual + 1, $con);
-            }
-            else{
-                $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con)."<br>";
-                $GLOBALS['flagError'] = true;
-            }
+            $GLOBALS['mssCobrarCreditos'] .= "El credito: $idCredito quedo con un total de: $saldoNuevo"."<br>";
+            registrarConsignacion($idCredito, $mesesActual + 1, $con);
         }
+        else{
+            $GLOBALS['mssCobrarCreditos'] .= "Problemas en la conexión ".mysqli_error($con)."<br>";
+            $GLOBALS['flagError'] = true;
+        }
+            
+        
     }
 
     function registrarConsignacion($idCredito, $mesesActual, $con){

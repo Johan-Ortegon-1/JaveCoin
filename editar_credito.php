@@ -224,7 +224,6 @@ function update_credito()
     }
     if ($contador > 0) { //Asegurarse de que modifique al menos un campo
         $str_datos .= " WHERE `credito`.`PID` = {$_POST["ID"]};"; //CAMBIAR AQUI A ID DEl Credito.
-        echo $str_datos; //UPDATE `cuenta` SET `Saldo` = '10196.01', `Cuota_manejo` = '11.02', `ID_USUARIO` = '2' WHERE `cuenta`.`PID` = 1;
         echo "<br>";
         $sql = $str_datos;
         if (mysqli_query($con, $sql)) {
