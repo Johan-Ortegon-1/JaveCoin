@@ -129,19 +129,22 @@
                     $creditoEnvio = mysqli_query($con,$sql);
                     $row = mysqli_fetch_row($creditoEnvio);
 
-                    //busco el usuario asociado a esa cuenta
-                    $sql = "SELECT * FROM `usuario` WHERE `PID` = $row[7]";
-                    $usuarioEnvio = mysqli_query($con,$sql);
-                    $row = mysqli_fetch_row($usuarioEnvio);
+                    if($row[7] !=NULL){
+                        //busco el usuario asociado a esa cuenta
+                        $sql = "SELECT * FROM `usuario` WHERE `PID` = $row[7]";
+                        $usuarioEnvio = mysqli_query($con,$sql);
+                        $row = mysqli_fetch_row($usuarioEnvio);
 
-                    if(implode(null,$row) == null){
-                        //el usuario probablemente sea un visitante
-                    }else{
-                        $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`) 
+                        if(implode(null,$row) == null){
+                            //el usuario probablemente sea un visitante
+                        }else{
+                            $sql = "INSERT INTO `notificaciones` (`PID`, `Fecha`, `Mensaje`, `ID_USUARIO`) 
                         VALUES (NULL, '$date', 'Se te han consignado $cantidad al credito #$IDP', $row[0])";
 
-                        mysqli_query($con,$sql);
+                            mysqli_query($con,$sql);
+                        }
                     }
+
 
                     registrarConsignacion($IDP, $cantidad, $con);
                 }
