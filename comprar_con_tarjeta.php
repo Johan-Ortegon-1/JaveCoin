@@ -27,7 +27,7 @@
             $tarjetas = "";
             while($fila = mysqli_fetch_array($resultado)) {
 
-                $sql = "SELECT * FROM `tarjeta_credito` WHERE `ID_CUENTA` = $fila[PID]";
+                $sql = "SELECT * FROM `tarjeta_credito` WHERE `ID_CUENTA` = $fila[PID] AND `Estado` LIKE 'Aprobado'";
                 $resultado2 = mysqli_query($con,$sql );
                 while($fila2 = mysqli_fetch_array($resultado2)) {
                     $tarjetas .= "
